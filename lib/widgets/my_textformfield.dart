@@ -31,7 +31,7 @@ class MyTextFormField extends StatelessWidget {
         hintText: hint,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Color(0xFFFF9933)), borderRadius: BorderRadius.circular(12)),
-        focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Color(0xFFFF9933, width: 2), borderRadius: BorderRadius.circular(12))),
+        focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Color(0xFFFF9933)), borderRadius: BorderRadius.circular(12)),
       ),
       validator: validator ?? (value) {
         if (value == null || value.isEmpty) {

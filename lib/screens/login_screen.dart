@@ -12,6 +12,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  late String error;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +36,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 hint: 'Enter email (e.g., user@neobazaar.np)',
                 error: 'Email required',
                 keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+  if (value == null || value.isEmpty) {
+    return error;
+  }
+  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+    return 'Invalid email format';
+  }
+  return null;
+},
               ),
               const SizedBox(height: 24),
               MyTextFormField(

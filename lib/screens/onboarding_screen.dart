@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neobazaar/screens/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -7,32 +8,59 @@ class OnboardingScreen extends StatefulWidget {
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends State<OnboardingScreen> with TickerProviderStateMixin {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  late AnimationController _textAnimationController;
+
+  
+  // Helper to load either network images or local assets.
+  Widget _buildImage(String src) {
+    if (src.startsWith('http')) {
+      return Image.network(src, height: 300);
+    }
+     return Image.asset(src, height: 300);
+  }
 
   final List<Map<String, String>> pages = [
     {
       "title": "Welcome to NeoBazaar",
       "desc": "Nepal's first AI-powered marketplace",
-      "image": "https://via.placeholder.com/300/FF9933/FFFFFF?text=1"
+      "image": "images/NeoBazaar_Logo.png"
     },
     {
       "title": "AI Product Check",
-      "desc": "YOLOv8 verifies condition & price instantly",
-      "image": "https://via.placeholder.com/300/0055A4/FFFFFF?text=2"
+      "desc": "Verifies condition & price instantly",
+      "image": "images/ProductCheck.png"
     },
     {
       "title": "Earn NeoTokens",
       "desc": "List items → Get rewards → Top the leaderboard",
-      "image": "https://via.placeholder.com/300/0F172A/FFFFFF?text=3"
+      "image": "images/EarnNeoTokens.png"
     },
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _textAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    _textAnimationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _textAnimationController.dispose();
+    _textAnimationController.dispose();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       backgroundColor: const Color(0xFF0F172A),
       body: Container(
         decoration: const BoxDecoration(
@@ -43,36 +71,53 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
       ),
         child: Stack(
-          
           children: [
             PageView.builder(
               controller: _pageController,
               onPageChanged: (value) {
                 setState(() {
                   _currentPage = value;
+                  _textAnimationController.reset();
+                  _textAnimationController.forward();
                 });
               },
               itemCount: pages.length,
               itemBuilder: (context, index) {
                 return Padding(
-                  
                   padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                   child: Column(
-                    
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.network(pages[index]["image"]!, height: 300),
+                      SizedBox(
+                        height: 150,
+                        child: _buildImage(pages[index]["image"]!)),
                       const SizedBox(height: 50),
-                      Text(
-                        pages[index]["title"]!,
-                        style: const TextStyle(color: Color(0xFFFF9933), fontSize: 28, fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
+                      SlideTransition(
+                        position: Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+                          CurvedAnimation(parent: _textAnimationController, curve: Curves.easeOut),
+                        ),
+                        child: FadeTransition(
+                          opacity: _textAnimationController,
+                          child: Text(
+                            pages[index]["title"]!,
+                            style: const TextStyle(color: Color(0xFFFF9933), fontSize: 28, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 20),
-                      Text(
-                        pages[index]["desc"]!,
-                        style: const TextStyle(color: Colors.white70, fontSize: 18),
-                        textAlign: TextAlign.center,
+                      SlideTransition(
+                        position: Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+                          CurvedAnimation(parent: _textAnimationController, curve: Curves.easeOut),
+                        ),
+                        child: FadeTransition(
+                          opacity: _textAnimationController,
+                          child: Text(
+                            pages[index]["desc"]!,
+                            style: const TextStyle(color: Colors.white70, fontSize: 18),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -112,7 +157,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 children: [
                   TextButton(
                     onPressed: () {
-                      // Skip → Login (later)
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
                     },
                     child: const Text("Skip", style: TextStyle(color: Color(0xFFFF9933), fontSize: 18)),
                   ),
@@ -120,7 +165,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF9933)),
                     onPressed: () {
                       if (_currentPage == pages.length - 1) {
-                        // Go to Login (later)
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
                       } else {
                         _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
                       }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neobazaar/screens/onboarding_screen.dart';
 import 'screens/splash_screen.dart';
 
 void main() {
@@ -11,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'NeoBazaar',
       theme: ThemeData(
         primarySwatch: Colors.blue,

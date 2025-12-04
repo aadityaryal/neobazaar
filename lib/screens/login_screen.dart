@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:neobazaar/screens/home_screen.dart';
+import 'package:neobazaar/screens/register_screen.dart';
 import '../widgets/my_textformfield.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -33,9 +35,11 @@ class _LoginScreenState extends State<LoginScreen> {
               MyTextFormField(
                 controller: emailController,
                 label: 'Email',
+                
                 hint: 'Enter email (e.g., user@neobazaar.np)',
                 error: 'Email required',
                 keyboardType: TextInputType.emailAddress,
+                
                 validator: (value) {
   if (value == null || value.isEmpty) {
     return error;
@@ -61,13 +65,42 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFF9933), padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
+                                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+
+
                       // No navigation yet — placeholder for later
                     }
                   },
                   child: const Text('Login', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
               ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'No Account? ',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: const Color(0xFFFF9933),
+                    ),
+                    child: const Text(
+                      'Register',
+                      style: TextStyle(decoration: TextDecoration.underline, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
             ],
+            
           ),
         ),
       ),

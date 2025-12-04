@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neobazaar/screens/login_screen.dart';
 import '../widgets/my_textformfield.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -79,11 +80,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFF9933), padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+
                       // No navigation yet — placeholder for later
                     }
                   },
                   child: const Text('Register', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
+              ),
+
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'No Account? ',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: const Color(0xFFFF9933),
+                    ),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(decoration: TextDecoration.underline, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

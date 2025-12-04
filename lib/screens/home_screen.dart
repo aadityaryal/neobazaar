@@ -8,6 +8,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF0F172A),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFF1E293B),
         title: const Text('NeoBazaar Home', style: TextStyle(color: Color(0xFFFF9933))),
       ),

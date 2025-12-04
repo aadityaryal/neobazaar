@@ -24,6 +24,7 @@ class MyTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      style: const TextStyle(color: Color.fromARGB(255, 232, 196, 196)),
       obscureText: obscureText,
       keyboardType: keyboardType,
       decoration: InputDecoration(

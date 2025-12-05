@@ -12,9 +12,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
   final PageController _pageController = PageController();
   int _currentPage = 0;
   late AnimationController _textAnimationController;
-
-  
-  // Helper to load either network images or local assets.
   Widget _buildImage(String src) {
     if (src.startsWith('http')) {
       return Image.network(src, height: 300);

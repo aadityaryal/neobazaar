@@ -39,14 +39,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 error: 'Email required',
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
-  if (value == null || value.isEmpty) {
-    return error;
-  }
-  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-    return 'Invalid email format';
-  }
-  return null;
-},
+                  if (value == null || value.isEmpty) {
+                    return error;
+                  }
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                    return 'Invalid email format';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 24),
               MyTextFormField(
@@ -81,8 +81,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
-
-                      // No navigation yet — placeholder for later
                     }
                   },
                   child: const Text('Register', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),

@@ -44,7 +44,7 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text('Rs. ${(index + 1) * 5000}', style: const TextStyle(color: Color(0xFFFF9933))),
                       const SizedBox(height: 4),
-Text('Location: Kathmandu Valley', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                      Text('Location: Kathmandu Valley', style: const TextStyle(color: Colors.grey, fontSize: 12)),
                     ],
                   ),
                 ),

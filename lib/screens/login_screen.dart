@@ -41,14 +41,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 keyboardType: TextInputType.emailAddress,
                 
                 validator: (value) {
-  if (value == null || value.isEmpty) {
-    return error;
-  }
-  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-    return 'Invalid email format';
-  }
-  return null;
-},
+                  if (value == null || value.isEmpty) {
+                    return error;
+                  }
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                    return 'Invalid email format';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 24),
               MyTextFormField(
@@ -65,10 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFF9933), padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-
-
-                      // No navigation yet — placeholder for later
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
                     }
                   },
                   child: const Text('Login', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),

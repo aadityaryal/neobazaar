@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neobazaar/themes/theme_data.dart';
 import 'screens/splash_screen.dart';
 
 void main() {
@@ -13,9 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'NeoBazaar',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: appTheme(),
       home: const SplashScreen(),
     );
   }

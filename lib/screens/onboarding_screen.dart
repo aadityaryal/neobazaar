@@ -8,7 +8,8 @@ class OnboardingScreen extends StatefulWidget {
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> with TickerProviderStateMixin {
+class _OnboardingScreenState extends State<OnboardingScreen>
+    with TickerProviderStateMixin {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   late AnimationController _textAnimationController;
@@ -16,24 +17,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
     if (src.startsWith('http')) {
       return Image.network(src, height: 300);
     }
-     return Image.asset(src, height: 300);
+    return Image.asset(src, height: 300);
   }
 
   final List<Map<String, String>> pages = [
     {
       "title": "Welcome to NeoBazaar",
       "desc": "Nepal's first AI-powered marketplace",
-      "image": "images/NeoBazaar_Logo.png"
+      "image": "images/NeoBazaar_Logo.png",
     },
     {
       "title": "AI Product Check",
       "desc": "Verifies condition & price instantly",
-      "image": "images/ProductCheck.png"
+      "image": "images/ProductCheck.png",
     },
     {
       "title": "Earn NeoTokens",
       "desc": "List items → Get rewards → Top the leaderboard",
-      "image": "images/EarnNeoTokens.png"
+      "image": "images/EarnNeoTokens.png",
     },
   ];
 
@@ -58,15 +59,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: Colors.white,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
-        ),
-      ),
         child: Stack(
           children: [
             PageView.builder(
@@ -81,37 +75,62 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
               itemCount: pages.length,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 50,
+                    vertical: 20,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
                         height: 150,
-                        child: _buildImage(pages[index]["image"]!)),
+                        child: _buildImage(pages[index]["image"]!),
+                      ),
                       const SizedBox(height: 50),
                       SlideTransition(
-                        position: Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
-                          CurvedAnimation(parent: _textAnimationController, curve: Curves.easeOut),
-                        ),
+                        position:
+                            Tween<Offset>(
+                              begin: const Offset(0, 0.3),
+                              end: Offset.zero,
+                            ).animate(
+                              CurvedAnimation(
+                                parent: _textAnimationController,
+                                curve: Curves.easeOut,
+                              ),
+                            ),
                         child: FadeTransition(
                           opacity: _textAnimationController,
                           child: Text(
                             pages[index]["title"]!,
-                            style: const TextStyle(color: Color(0xFFFF9933), fontSize: 28, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              color: Color(0xFF6B46C1),
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
                       SlideTransition(
-                        position: Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
-                          CurvedAnimation(parent: _textAnimationController, curve: Curves.easeOut),
-                        ),
+                        position:
+                            Tween<Offset>(
+                              begin: const Offset(0, 0.3),
+                              end: Offset.zero,
+                            ).animate(
+                              CurvedAnimation(
+                                parent: _textAnimationController,
+                                curve: Curves.easeOut,
+                              ),
+                            ),
                         child: FadeTransition(
                           opacity: _textAnimationController,
                           child: Text(
                             pages[index]["desc"]!,
-                            style: const TextStyle(color: Colors.white70, fontSize: 18),
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -121,7 +140,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                 );
               },
             ),
-        
+
             // Dots Indicator
             Positioned(
               bottom: 100,
@@ -136,14 +155,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                     width: _currentPage == index ? 24 : 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: _currentPage == index ? const Color(0xFFFF9933) : Colors.grey,
+                      color: _currentPage == index
+                          ? const Color(0xFF6B46C1)
+                          : Colors.grey,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   );
                 }),
               ),
             ),
-        
+
             // Buttons
             Positioned(
               bottom: 30,
@@ -154,20 +175,64 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                 children: [
                   TextButton(
                     onPressed: () {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                      Navigator.pushReplacement(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  const LoginScreen(),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: child,
+                                );
+                              },
+                        ),
+                      );
                     },
-                    child: const Text("Skip", style: TextStyle(color: Color(0xFFFF9933), fontSize: 18)),
+                    child: const Text(
+                      "Skip",
+                      style: TextStyle(color: Color(0xFF6B46C1), fontSize: 18),
+                    ),
                   ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF9933)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6B46C1),
+                    ),
                     onPressed: () {
                       if (_currentPage == pages.length - 1) {
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                        Navigator.pushReplacement(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    const LoginScreen(),
+                            transitionsBuilder:
+                                (
+                                  context,
+                                  animation,
+                                  secondaryAnimation,
+                                  child,
+                                ) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+                                },
+                          ),
+                        );
                       } else {
-                        _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+                        _pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeIn,
+                        );
                       }
                     },
-                    child: Text(_currentPage == pages.length - 1 ? "Get Started" : "Next", style: const TextStyle(color: Colors.white)),
+                    child: Text(
+                      _currentPage == pages.length - 1 ? "Get Started" : "Next",
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),

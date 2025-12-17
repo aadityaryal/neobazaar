@@ -16,7 +16,14 @@ class _SplashScreenState extends State<SplashScreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                const OnboardingScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+          ),
         );
       }
     });
@@ -25,12 +32,12 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: Colors.white,
       body: Center(
         child: const Text(
           'NeoBazaar',
           style: TextStyle(
-            color: Color(0xFFFF9933),
+            color: Color(0xFF6B46C1),
             fontSize: 48,
             fontWeight: FontWeight.bold,
           ),

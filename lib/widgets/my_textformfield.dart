@@ -24,22 +24,30 @@ class MyTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      style: const TextStyle(color: Color.fromARGB(255, 232, 196, 196)),
+      style: const TextStyle(color: Colors.black),
       obscureText: obscureText,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Color(0xFFFF9933)), borderRadius: BorderRadius.circular(12)),
-        focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Color(0xFFFF9933)), borderRadius: BorderRadius.circular(12)),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Color(0xFF6B46C1)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Color(0xFF6B46C1)),
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
-      validator: validator ?? (value) {
-        if (value == null || value.isEmpty) {
-          return error;
-        }
-        return null;
-      },
+      validator:
+          validator ??
+          (value) {
+            if (value == null || value.isEmpty) {
+              return error;
+            }
+            return null;
+          },
     );
   }
 }

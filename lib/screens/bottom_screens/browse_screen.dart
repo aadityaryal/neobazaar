@@ -5,6 +5,6 @@ class BrowseScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(child: Center(child: Text("Browse Screen")));
+    return SizedBox.expand(child: Center(child: Text("Browse Screen")));
   }
 }

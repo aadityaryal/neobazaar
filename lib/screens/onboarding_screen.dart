@@ -24,17 +24,17 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     {
       "title": "Welcome to NeoBazaar",
       "desc": "Nepal's first AI-powered marketplace",
-      "image": "images/NeoBazaar_Logo.png",
+      "image": "assets/images/NeoBazaar_Logo.png",
     },
     {
       "title": "AI Product Check",
       "desc": "Verifies condition & price instantly",
-      "image": "images/ProductCheck.png",
+      "image": "assets/images/ProductCheck.png",
     },
     {
       "title": "Earn NeoTokens",
       "desc": "List items → Get rewards → Top the leaderboard",
-      "image": "images/EarnNeoTokens.png",
+      "image": "assets/images/EarnNeoTokens.png",
     },
   ];
 

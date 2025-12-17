@@ -28,12 +28,20 @@ ThemeData appTheme() {
 
     textTheme: const TextTheme(
       headlineMedium: TextStyle(
-        color: seedColor,
+        color: Color(0xFFFF9933),
         fontSize: 24,
-        fontWeight: FontWeight.bold,
+        fontFamily: 'Inter Bold',
       ),
-      bodyMedium: TextStyle(color: Colors.white, fontSize: 16),
-      bodySmall: TextStyle(color: Colors.grey, fontSize: 12),
+      bodyMedium: TextStyle(
+        color: Colors.white,
+        fontSize: 16,
+        fontFamily: 'Inter Regular',
+      ),
+      bodySmall: TextStyle(
+        color: Colors.grey,
+        fontSize: 12,
+        fontFamily: 'Inter Regular',
+      ),
     ),
 
     cardColor: colorScheme.surface,
@@ -50,7 +58,5 @@ ThemeData appTheme() {
       selectedItemColor: seedColor,
       unselectedItemColor: Colors.grey,
     ),
-
-    fontFamily: 'Inter',
   );
 }

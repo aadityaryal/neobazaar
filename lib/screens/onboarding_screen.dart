@@ -24,17 +24,17 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     {
       "title": "Welcome to NeoBazaar",
       "desc": "Nepal's first AI-powered marketplace",
-      "image": "assets/images/NeoBazaar_Logo.png",
+      "image": "assets/images/onboarding/NeoBazaar_Logo.png",
     },
     {
       "title": "AI Product Check",
       "desc": "Verifies condition & price instantly",
-      "image": "assets/images/ProductCheck.png",
+      "image": "assets/images/onboarding/ProductCheck.png",
     },
     {
       "title": "Earn NeoTokens",
       "desc": "List items → Get rewards → Top the leaderboard",
-      "image": "assets/images/EarnNeoTokens.png",
+      "image": "assets/images/onboarding/EarnNeoTokens.png",
     },
   ];
 
@@ -59,7 +59,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: Container(
         child: Stack(
           children: [

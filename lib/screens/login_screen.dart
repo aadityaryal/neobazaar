@@ -19,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Form(
@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/images/NeoBazaar_Logo.png',
+                'assets/images/onboarding/NeoBazaar_Logo.png',
                 height: 100,
               ), // Added logo
               const SizedBox(height: 24),
@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         PageRouteBuilder(
                           pageBuilder:
                               (context, animation, secondaryAnimation) =>
-                                  const DashboardScreen(),
+                                  DashboardScreen(),
                           transitionsBuilder:
                               (context, animation, secondaryAnimation, child) {
                                 return FadeTransition(

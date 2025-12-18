@@ -25,11 +25,14 @@ class ProductCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(12),
+              child: Container(
+                height: 50,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(12),
+                  ),
+                  child: Image.asset(imageUrl, fit: BoxFit.cover),
                 ),
-                child: Image.network(imageUrl, fit: BoxFit.cover),
               ),
             ),
             Padding(
@@ -41,7 +44,7 @@ class ProductCard extends StatelessWidget {
                   Text(
                     price,
                     style: TextStyle(
-                      color: Theme.of(context).primaryColor,
+                      // color: Theme.of(context).primaryColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

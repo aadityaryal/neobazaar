@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:neobazaar/screens/home_screen.dart';
+import 'package:neobazaar/screens/dashboard_screen.dart';
 import 'package:neobazaar/screens/register_screen.dart';
 import '../widgets/my_textformfield.dart';
 
@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'images/NeoBazaar_Logo.png',
+                'assets/images/NeoBazaar_Logo.png',
                 height: 100,
               ), // Added logo
               const SizedBox(height: 24),
@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         PageRouteBuilder(
                           pageBuilder:
                               (context, animation, secondaryAnimation) =>
-                                  const HomeScreen(),
+                                  const DashboardScreen(),
                           transitionsBuilder:
                               (context, animation, secondaryAnimation, child) {
                                 return FadeTransition(

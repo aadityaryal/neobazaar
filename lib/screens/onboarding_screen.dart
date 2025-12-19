@@ -15,9 +15,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   late AnimationController _textAnimationController;
   Widget _buildImage(String src) {
     if (src.startsWith('http')) {
-      return Image.network(src, height: 300);
+      return Image.network(src, fit: BoxFit.contain);
     }
-    return Image.asset(src, height: 300);
+    return Image.asset(src, fit: BoxFit.contain);
   }
 
   final List<Map<String, String>> pages = [
@@ -75,9 +75,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               itemCount: pages.length,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 50,
-                    vertical: 20,
+                  padding: const EdgeInsets.only(
+                    left: 50,
+                    right: 50,
+                    top: 20,
+                    bottom: 140,
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

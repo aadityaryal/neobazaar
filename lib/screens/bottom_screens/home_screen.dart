@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:neobazaar/widgets/menu_button.dart';
+import 'package:neobazaar/widgets/neobazaar_drawer.dart';
 import 'package:neobazaar/widgets/product_card.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -62,7 +64,9 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox.expand(
       child: Scaffold(
+        drawer: const NeoBazaarDrawer(),
         appBar: AppBar(
+          leading: const MenuButton(),
           title: const Text('NeoBazaar'),
           actions: [
             IconButton(icon: const Icon(Icons.inbox), onPressed: () {}),

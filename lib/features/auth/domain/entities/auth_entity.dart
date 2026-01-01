@@ -7,7 +7,7 @@ class AuthEntity extends Equatable{
   final String? phoneNumber;
   final String username;
   final String? password;
-  final int neoTokens;   // Default starting tokens
+  final int neoTokens;   
   final int xp;
   final int reputationScore;
   final bool kycVerified;

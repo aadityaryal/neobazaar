@@ -4,6 +4,6 @@ class HiveTableConstant {
   // Database name
   static const String dbName = 'neobazaardb';
 
-  static const int userTypeId = 0;
-  static const String userTable = 'user_table';
+  static const int authTypeId = 0;
+  static const String authTable = 'user_table';
 }

@@ -38,7 +38,7 @@ class AuthHiveModelAdapter extends TypeAdapter<AuthHiveModel> {
     writer
       ..writeByte(13)
       ..writeByte(0)
-      ..write(obj.userId)
+      ..write(obj.authId)
       ..writeByte(1)
       ..write(obj.fullName)
       ..writeByte(2)

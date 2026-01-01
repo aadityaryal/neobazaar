@@ -3,29 +3,12 @@ import 'package:neobazaar/core/constants/hive_table_constant.dart';
 import 'package:neobazaar/features/auth/domain/entities/auth_entity.dart';
 import 'package:uuid/uuid.dart';
 
-
-  // final String? userId;
-  // final String fullName;
-  // final String email;
-  // final String? phoneNumber;
-  // final String username;
-  // final String? password;
-  // final int neoTokens;   // Default starting tokens
-  // final int xp;
-  // final int reputationScore;
-  // final bool kycVerified;
-  // final List<String> badges;
-  // final String? location;
-  // final String? profileImage;
-
-
 part 'auth_hive_model.g.dart';
 
-@HiveType(typeId:HiveTableConstant.userTypeId)
+@HiveType(typeId: HiveTableConstant.authTypeId)
 class AuthHiveModel extends HiveObject {
-
   @HiveField(0)
-  final String? userId;
+  final String? authId;
   @HiveField(1)
   final String fullName;
   @HiveField(2)
@@ -37,7 +20,7 @@ class AuthHiveModel extends HiveObject {
   @HiveField(5)
   final String? password;
   @HiveField(6)
-  final int neoTokens;   // Default starting tokens
+  final int neoTokens; // Default starting tokens
   @HiveField(7)
   final int xp;
   @HiveField(8)
@@ -52,16 +35,27 @@ class AuthHiveModel extends HiveObject {
   final String? profileImage;
 
   AuthHiveModel({
-    String? userId, required this.fullName, required this.email, required this.phoneNumber, required this.username, required this.password, int? neoTokens, int? xp, int? reputationScore, bool? kycVerified, List<String>? badges, required this.location, required this.profileImage
-  }) : userId = userId ?? Uuid().v4(),
-        neoTokens = neoTokens ?? 0,
-        xp = xp ?? 0,
-        reputationScore = reputationScore ?? 0,
-        kycVerified = kycVerified ?? false,
-        badges = badges ?? [];
+    String? userId,
+    required this.fullName,
+    required this.email,
+    required this.phoneNumber,
+    required this.username,
+    required this.password,
+    int? neoTokens,
+    int? xp,
+    int? reputationScore,
+    bool? kycVerified,
+    List<String>? badges,
+    required this.location,
+    required this.profileImage,
+  }) : authId = userId ?? Uuid().v4(),
+       neoTokens = neoTokens ?? 0,
+       xp = xp ?? 0,
+       reputationScore = reputationScore ?? 0,
+       kycVerified = kycVerified ?? false,
+       badges = badges ?? [];
 
-  
-  // from Entity 
+  // from Entity
   factory AuthHiveModel.fromEntity(AuthEntity entity) {
     return AuthHiveModel(
       userId: entity.userId,
@@ -76,14 +70,14 @@ class AuthHiveModel extends HiveObject {
       kycVerified: entity.kycVerified,
       badges: entity.badges,
       location: entity.location,
-      profileImage: entity.profileImage
+      profileImage: entity.profileImage,
     );
-  } 
+  }
 
   // To Entity
   AuthEntity toEntity() {
     return AuthEntity(
-      userId: userId,
+      userId: authId,
       fullName: fullName,
       email: email,
       phoneNumber: phoneNumber,
@@ -95,7 +89,7 @@ class AuthHiveModel extends HiveObject {
       kycVerified: kycVerified,
       badges: badges,
       location: location,
-      profileImage: profileImage
+      profileImage: profileImage,
     );
   }
 
@@ -103,10 +97,4 @@ class AuthHiveModel extends HiveObject {
   static List<AuthEntity> toEntityList(List<AuthHiveModel> models) {
     return models.map((model) => model.toEntity()).toList();
   }
-
-
-  
-
-  
-  
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:neobazaar/widgets/menu_button.dart';
-import 'package:neobazaar/widgets/neobazaar_drawer.dart';
-import 'package:neobazaar/widgets/product_card.dart';
+import 'package:neobazaar/features/dashboard/presentation/widgets/menu_button.dart';
+import 'package:neobazaar/features/dashboard/presentation/widgets/neobazaar_drawer.dart';
+import 'package:neobazaar/features/dashboard/presentation/widgets/product_card.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});

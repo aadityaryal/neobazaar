@@ -10,9 +10,7 @@ class NeoBazaarDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           const DrawerHeader(
-            decoration: BoxDecoration(
-              color: Color(0xFF1E293B),
-            ),
+            decoration: BoxDecoration(color: Color(0xFF1E293B)),
             child: Text(
               'NeoBazaar Menu',
               style: TextStyle(
@@ -32,7 +30,7 @@ class NeoBazaarDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.logout),
-            title: const Text('Logout'),
+            title: const Text("Logout"),
             onTap: () {
               Navigator.pop(context);
               // TODO: Handle logout

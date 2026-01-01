@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:neobazaar/features/dashboard/presentation/pages/dashboard_screen.dart';
 import 'package:neobazaar/features/auth/presentation/pages/register_screen.dart';
-import '../../../../widgets/my_textformfield.dart';
+import '../widgets/my_textformfield.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

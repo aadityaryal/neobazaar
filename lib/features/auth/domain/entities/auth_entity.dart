@@ -7,9 +7,7 @@
 //   final String email;
 //   final String? phoneNumber;
 //   final String username;
-//   final String? password;
-//   final BatchEntity batch;
-//   final String? profilePicture;
+//   final String password;
 
 //   const AuthEntity({
 //     this.userId,
@@ -17,11 +15,9 @@
 //     required this.email,
 //     this.phoneNumber,
 //     required this.username,
-//     this.password,
-//     required this.batch,
-//     this.profilePicture,
+//     required this.password,
 //   });
   
 //   @override
-//   List<Object?> get props => [userId, fullName, email, phoneNumber, username, password, batch, profilePicture];
+//   List<Object?> get props => [userId, fullName, email, phoneNumber, username, password];
 // }

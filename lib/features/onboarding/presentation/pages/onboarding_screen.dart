@@ -51,7 +51,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   void dispose() {
     _textAnimationController.dispose();
-    _textAnimationController.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -60,123 +59,149 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: Colors.white,
-      body: Container(
-        child: Stack(
-          children: [
-            PageView.builder(
-              controller: _pageController,
-              onPageChanged: (value) {
-                setState(() {
-                  _currentPage = value;
-                  _textAnimationController.reset();
-                  _textAnimationController.forward();
-                });
-              },
-              itemCount: pages.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(
-                    left: 50,
-                    right: 50,
-                    top: 20,
-                    bottom: 140,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 150,
-                        child: _buildImage(pages[index]["image"]!),
-                      ),
-                      const SizedBox(height: 50),
-                      SlideTransition(
-                        position:
-                            Tween<Offset>(
-                              begin: const Offset(0, 0.3),
-                              end: Offset.zero,
-                            ).animate(
-                              CurvedAnimation(
-                                parent: _textAnimationController,
-                                curve: Curves.easeOut,
-                              ),
+      body: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            onPageChanged: (value) {
+              setState(() {
+                _currentPage = value;
+                _textAnimationController.reset();
+                _textAnimationController.forward();
+              });
+            },
+            itemCount: pages.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(
+                  left: 50,
+                  right: 50,
+                  top: 20,
+                  bottom: 140,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 150,
+                      child: _buildImage(pages[index]["image"]!),
+                    ),
+                    const SizedBox(height: 50),
+                    SlideTransition(
+                      position:
+                          Tween<Offset>(
+                            begin: const Offset(0, 0.3),
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: _textAnimationController,
+                              curve: Curves.easeOut,
                             ),
-                        child: FadeTransition(
-                          opacity: _textAnimationController,
-                          child: Text(
-                            pages[index]["title"]!,
-                            style: const TextStyle(
-                              color: Color(0xFF6B46C1),
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
                           ),
+                      child: FadeTransition(
+                        opacity: _textAnimationController,
+                        child: Text(
+                          pages[index]["title"]!,
+                          style: const TextStyle(
+                            color: Color(0xFF6B46C1),
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      SlideTransition(
-                        position:
-                            Tween<Offset>(
-                              begin: const Offset(0, 0.3),
-                              end: Offset.zero,
-                            ).animate(
-                              CurvedAnimation(
-                                parent: _textAnimationController,
-                                curve: Curves.easeOut,
-                              ),
+                    ),
+                    const SizedBox(height: 20),
+                    SlideTransition(
+                      position:
+                          Tween<Offset>(
+                            begin: const Offset(0, 0.3),
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: _textAnimationController,
+                              curve: Curves.easeOut,
                             ),
-                        child: FadeTransition(
-                          opacity: _textAnimationController,
-                          child: Text(
-                            pages[index]["desc"]!,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                            ),
-                            textAlign: TextAlign.center,
                           ),
+                      child: FadeTransition(
+                        opacity: _textAnimationController,
+                        child: Text(
+                          pages[index]["desc"]!,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+      
+          // Dots Indicator
+          Positioned(
+            bottom: 100,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(pages.length, (index) {
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: _currentPage == index ? 24 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: _currentPage == index
+                        ? const Color(0xFF6B46C1)
+                        : Colors.grey,
+                    borderRadius: BorderRadius.circular(4),
                   ),
                 );
-              },
+              }),
             ),
-
-            // Dots Indicator
-            Positioned(
-              bottom: 100,
-              left: 0,
-              right: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(pages.length, (index) {
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: _currentPage == index ? 24 : 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: _currentPage == index
-                          ? const Color(0xFF6B46C1)
-                          : Colors.grey,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  );
-                }),
-              ),
-            ),
-
-            // Buttons
-            Positioned(
-              bottom: 30,
-              left: 30,
-              right: 30,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () {
+          ),
+      
+          // Buttons
+          Positioned(
+            bottom: 30,
+            left: 30,
+            right: 30,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder:
+                            (context, animation, secondaryAnimation) =>
+                                const LoginScreen(),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              );
+                            },
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Skip",
+                    style: TextStyle(color: Color(0xFF6B46C1), fontSize: 18),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6B46C1),
+                  ),
+                  onPressed: () {
+                    if (_currentPage == pages.length - 1) {
                       Navigator.pushReplacement(
                         context,
                         PageRouteBuilder(
@@ -184,7 +209,12 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                               (context, animation, secondaryAnimation) =>
                                   const LoginScreen(),
                           transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) {
+                              (
+                                context,
+                                animation,
+                                secondaryAnimation,
+                                child,
+                              ) {
                                 return FadeTransition(
                                   opacity: animation,
                                   child: child,
@@ -192,55 +222,22 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                               },
                         ),
                       );
-                    },
-                    child: const Text(
-                      "Skip",
-                      style: TextStyle(color: Color(0xFF6B46C1), fontSize: 18),
-                    ),
+                    } else {
+                      _pageController.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeIn,
+                      );
+                    }
+                  },
+                  child: Text(
+                    _currentPage == pages.length - 1 ? "Get Started" : "Next",
+                    style: const TextStyle(color: Colors.white),
                   ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6B46C1),
-                    ),
-                    onPressed: () {
-                      if (_currentPage == pages.length - 1) {
-                        Navigator.pushReplacement(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    const LoginScreen(),
-                            transitionsBuilder:
-                                (
-                                  context,
-                                  animation,
-                                  secondaryAnimation,
-                                  child,
-                                ) {
-                                  return FadeTransition(
-                                    opacity: animation,
-                                    child: child,
-                                  );
-                                },
-                          ),
-                        );
-                      } else {
-                        _pageController.nextPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeIn,
-                        );
-                      }
-                    },
-                    child: Text(
-                      _currentPage == pages.length - 1 ? "Get Started" : "Next",
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

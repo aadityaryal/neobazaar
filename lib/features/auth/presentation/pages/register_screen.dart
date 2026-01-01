@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:neobazaar/features/auth/presentation/pages/login_screen.dart';
-import '../../../../widgets/my_textformfield.dart';
+import '../widgets/my_textformfield.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -11,6 +11,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController userNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
@@ -40,9 +41,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 48),
                   MyTextFormField(
+                    controller: userNameController,
+                    label: "Full Name",
+                    hint: "Enter your full name.",
+                    error: "Name required",
+                  ),
+                  const SizedBox(height: 24),
+                  MyTextFormField(
                     controller: emailController,
                     label: 'Email',
-                    hint: 'Enter email (e.g., user@neobazaar.np)',
+                    hint: 'Enter email',
                     error: 'Email required',
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
@@ -132,10 +140,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        'Already have an account? ',
-                        style: TextStyle(color: Colors.black),
-                      ),
+                      const Text('Already have an account? '),
                       TextButton(
                         onPressed: () {
                           Navigator.push(
@@ -160,7 +165,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           );
                         },
                         style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF6B46C1),
+                          foregroundColor: const Color(0xFFFFFFFF),
                         ),
                         child: const Text(
                           'Login',

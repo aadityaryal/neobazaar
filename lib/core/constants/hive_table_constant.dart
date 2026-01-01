@@ -2,20 +2,8 @@ class HiveTableConstant {
   HiveTableConstant._();
 
   // Database name
-  static const String dbName = 'lost_n_found_db';
+  static const String dbName = 'neobazaardb';
 
-  static const int batchTypeId = 0;
-  static const String batchTable = 'batch_table';
-
-  static const int studentTypeId = 1;
-  static const String studentTable = 'student_table';
-
-  static const int itemTypeId = 2;
-  static const String itemTable = 'item_table';
-
-  static const int categoryTypeId = 3;
-  static const String categoryTable = 'category_table';
-
-  static const int commentsTypeId = 4;
-  static const String commentsTable = 'comments_table';
+  static const int userTypeId = 0;
+  static const String userTable = 'user_table';
 }

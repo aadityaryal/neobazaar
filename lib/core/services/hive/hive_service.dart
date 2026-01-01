@@ -1,6 +1,6 @@
 // import 'package:hive/hive.dart';
-// import 'package:lost_n_found/core/constants/hive_table_constant.dart';
 // import 'package:lost_n_found/features/auth/data/models/batch_hive_model.dart';
+// import 'package:neobazaar/core/constants/hive_table_constant.dart';
 // import 'package:path_provider/path_provider.dart';
 
 // class HiveService {

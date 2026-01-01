@@ -13,6 +13,7 @@ class AuthEntity extends Equatable{
   final bool kycVerified;
   final List<String> badges;
   final String? location;
+  final String? profileImage;
 
   const AuthEntity({
     this.userId,
@@ -26,9 +27,10 @@ class AuthEntity extends Equatable{
     required this.reputationScore,
     required this.kycVerified,
     required this.badges,
-    required this.location,
+    this.location,
+    this.profileImage
   });
   
   @override
-  List<Object?> get props => [userId, fullName, email, phoneNumber, username, password, neoTokens, xp, reputationScore, kycVerified, badges, location];
+  List<Object?> get props => [userId, fullName, email, phoneNumber, username, password, neoTokens, xp, reputationScore, kycVerified, badges, location, profileImage];
 }

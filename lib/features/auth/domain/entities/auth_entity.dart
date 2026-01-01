@@ -7,11 +7,11 @@ class AuthEntity extends Equatable{
   final String? phoneNumber;
   final String username;
   final String? password;
-  final int neoTokens;   
-  final int xp;
-  final int reputationScore;
-  final bool kycVerified;
-  final List<String> badges;
+  final int? neoTokens;   
+  final int? xp;
+  final int? reputationScore;
+  final bool? kycVerified;
+  final List<String>? badges;
   final String? location;
   final String? profileImage;
 
@@ -22,11 +22,11 @@ class AuthEntity extends Equatable{
     this.phoneNumber,
     required this.username,
     this.password,
-    required this.neoTokens,
-    required this.xp,
-    required this.reputationScore,
-    required this.kycVerified,
-    required this.badges,
+    this.neoTokens,
+    this.xp,
+    this.reputationScore,
+    this.kycVerified,
+    this.badges,
     this.location,
     this.profileImage
   });

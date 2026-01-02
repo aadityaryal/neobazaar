@@ -38,7 +38,7 @@ class AuthHiveModel extends HiveObject {
     String? userId,
     required this.fullName,
     required this.email,
-    required this.phoneNumber,
+    this.phoneNumber,
     required this.username,
     required this.password,
     int? neoTokens,

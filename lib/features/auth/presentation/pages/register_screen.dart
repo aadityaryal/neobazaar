@@ -1,15 +1,20 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neobazaar/features/auth/presentation/pages/login_screen.dart';
+import 'package:neobazaar/features/auth/presentation/state/auth_state.dart';
+import 'package:neobazaar/features/auth/presentation/view_model/auth_view_model.dart';
 import '../widgets/my_textformfield.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController userNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -18,8 +23,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
       TextEditingController();
   late String error;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   Future.microtask(() {
+  //     ref.read(authViewModelProvider.notifier);
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authViewModelProvider);
+
+    // listen for auth change states
+    // ref.read
+    // ref.watch
+
+    ref.listen<AuthState>(authViewModelProvider, (previous, next) {
+      if (next.status == AuthStatus.registered) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Registration successful! Please login.'),
+          ),
+        );
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                const LoginScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+          ),
+        );
+      } else if (next.status == AuthStatus.error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next.errorMessage ?? 'Registration failed')),
+        );
+      }
+    });
+
     return Scaffold(
       // backgroundColor: Colors.white,
       body: Center(
@@ -103,6 +147,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Registering user...'),
+                            ),
+                          );
                           Navigator.pushReplacement(
                             context,
                             PageRouteBuilder(
@@ -123,6 +172,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   },
                             ),
                           );
+                          ref
+                              .read(authViewModelProvider.notifier)
+                              .register(
+                                fullName: userNameController.text,
+                                email: emailController.text,
+                                username: userNameController.text,
+                                password: passwordController.text,
+                              );
                         }
                       },
                       child: const Text(

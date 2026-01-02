@@ -62,19 +62,22 @@ class AuthRepository implements IAuthRepository{
   }
 
   @override
-  Future<Either<Failure, bool>> register(AuthEntity entity) async{
-
+  Future<Either<Failure, bool>> register(AuthEntity entity) async {
     try {
+      // check if email exists
+      final emailExists = await _authDatasource.isEmailExists(entity.email);
+      if (emailExists) {
+        return Left(LocalDatabaseFailure(message: "Email already exists"));
+      }
       // convert to model
       final model = AuthHiveModel.fromEntity(entity);
       final result = await _authDatasource.register(model);
       if (result) {
-        return Right(true);
+        return const Right(true);
       }
       return Left(LocalDatabaseFailure(message: "Failed to register user"));
     } catch (e) {
-      return Left(LocalDatabaseFailure(message: e.toString()));      
+      return Left(LocalDatabaseFailure(message: e.toString()));
     }
-
   }
 }

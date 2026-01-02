@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:neobazaar/core/widgets/gradient_button.dart';
+import 'package:neobazaar/app/theme/app_colors.dart';
 import 'package:neobazaar/features/auth/presentation/pages/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -140,7 +142,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               );
             },
           ),
-      
+
           // Dots Indicator
           Positioned(
             bottom: 100,
@@ -164,7 +166,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               }),
             ),
           ),
-      
+
           // Buttons
           Positioned(
             bottom: 30,
@@ -173,14 +175,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextButton(
+                GradientButton(
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
                       PageRouteBuilder(
-                        pageBuilder:
-                            (context, animation, secondaryAnimation) =>
-                                const LoginScreen(),
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const LoginScreen(),
                         transitionsBuilder:
                             (context, animation, secondaryAnimation, child) {
                               return FadeTransition(
@@ -191,15 +192,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       ),
                     );
                   },
-                  child: const Text(
-                    "Skip",
-                    style: TextStyle(color: Color(0xFF6B46C1), fontSize: 18),
-                  ),
+                  text: "Skip",
+
+                  // style: TextStyle(color: Color(0xFF6B46C1), fontSize: 18),
                 ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6B46C1),
-                  ),
+                GradientButton(
                   onPressed: () {
                     if (_currentPage == pages.length - 1) {
                       Navigator.pushReplacement(
@@ -209,12 +206,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                               (context, animation, secondaryAnimation) =>
                                   const LoginScreen(),
                           transitionsBuilder:
-                              (
-                                context,
-                                animation,
-                                secondaryAnimation,
-                                child,
-                              ) {
+                              (context, animation, secondaryAnimation, child) {
                                 return FadeTransition(
                                   opacity: animation,
                                   child: child,
@@ -229,10 +221,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       );
                     }
                   },
-                  child: Text(
-                    _currentPage == pages.length - 1 ? "Get Started" : "Next",
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                  text: _currentPage == pages.length - 1
+                      ? "Get Started"
+                      : "Next",
+                  gradient: AppColors.primaryGradient,
                 ),
               ],
             ),

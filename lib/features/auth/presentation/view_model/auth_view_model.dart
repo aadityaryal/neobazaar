@@ -3,7 +3,7 @@ import 'package:neobazaar/features/auth/domain/usecases/login_usecase.dart';
 import 'package:neobazaar/features/auth/domain/usecases/register_usecase.dart';
 import 'package:neobazaar/features/auth/presentation/state/auth_state.dart';
 
-// providier 
+// providier
 final authViewModelProvider = NotifierProvider<AuthViewModel, AuthState>(
   () => AuthViewModel(),
 );
@@ -11,12 +11,13 @@ final authViewModelProvider = NotifierProvider<AuthViewModel, AuthState>(
 class AuthViewModel extends Notifier<AuthState> {
   late final RegisterUsecase _registerUsecase;
   late final LoginUsecase _loginUsecase;
+  bool _isProcessing = false; // Add flag
 
   @override
   AuthState build() {
     _registerUsecase = ref.read(registerUsecaseProvider);
     _loginUsecase = ref.read(loginUsecaseProvider);
-    return AuthState();  // Changed to return an instance
+    return AuthState(); // Changed to return an instance
   }
 
   Future<void> register({
@@ -25,6 +26,8 @@ class AuthViewModel extends Notifier<AuthState> {
     required String username,
     required String password,
   }) async {
+    if (_isProcessing) return; // Prevent duplicate calls
+    _isProcessing = true;
     state = state.copyWith(status: AuthStatus.loading);
     final params = RegisterUsecaseParams(
       fullName: fullName,
@@ -41,28 +44,18 @@ class AuthViewModel extends Notifier<AuthState> {
         );
       },
       (isRegistered) {
-        if (isRegistered) {
-          state = state.copyWith(status: AuthStatus.registered);
-        } else {
-          state = state.copyWith(
-            status: AuthStatus.error,
-            errorMessage: "Registration failed",
-          );
-        }
+        state = state.copyWith(status: AuthStatus.registered);
       },
     );
+    _isProcessing = false; // Reset after
   }
 
-  // login 
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  // login
+  Future<void> login({required String email, required String password}) async {
+    if (_isProcessing) return; // Prevent duplicate calls
+    _isProcessing = true;
     state = state.copyWith(status: AuthStatus.loading);
-    final params = LoginUsecaseParams(
-      email: email,
-      password: password,
-    );
+    final params = LoginUsecaseParams(email: email, password: password);
     final result = await _loginUsecase(params);
     result.fold(
       (failure) {
@@ -78,5 +71,11 @@ class AuthViewModel extends Notifier<AuthState> {
         );
       },
     );
+    _isProcessing = false; // Reset after
+  }
+
+  // logout
+  void logout() {
+    state = AuthState(status: AuthStatus.unauthenticated);
   }
 }

@@ -1,10 +1,11 @@
 import 'dart:core';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:neobazaar/core/widgets/gradient_button.dart';
 import 'package:neobazaar/features/auth/presentation/pages/login_screen.dart';
 import 'package:neobazaar/features/auth/presentation/state/auth_state.dart';
 import 'package:neobazaar/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:neobazaar/core/utils/snackbar_utils.dart';
 import '../widgets/my_textformfield.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -17,35 +18,26 @@ class RegisterScreen extends ConsumerStatefulWidget {
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController userNameController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
-  late String error;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   Future.microtask(() {
-  //     ref.read(authViewModelProvider.notifier);
-  //   });
-  // }
+  bool _messageShown = false;
 
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
 
-    // listen for auth change states
-    // ref.read
-    // ref.watch
-
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
-      if (next.status == AuthStatus.registered) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Registration successful! Please login.'),
-          ),
+      if (next.status == AuthStatus.loading) {
+        _messageShown = false; // Reset for new attempt
+      } else if (next.status == AuthStatus.registered && !_messageShown) {
+        SnackbarUtils.showSuccess(
+          context,
+          'Registration successful! Please login.',
         );
+        _messageShown = true;
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
@@ -57,10 +49,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 },
           ),
         );
-      } else if (next.status == AuthStatus.error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.errorMessage ?? 'Registration failed')),
+      } else if (next.status == AuthStatus.error && !_messageShown) {
+        SnackbarUtils.showError(
+          context,
+          next.errorMessage ?? 'Registration failed',
         );
+        _messageShown = true;
       }
     });
 
@@ -92,6 +86,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                   const SizedBox(height: 24),
                   MyTextFormField(
+                    controller: usernameController,
+                    label: "Username",
+                    hint: "Enter your username.",
+                    error: "Username required",
+                  ),
+                  const SizedBox(height: 24),
+                  MyTextFormField(
                     controller: emailController,
                     label: 'Email',
                     hint: 'Enter email',
@@ -99,7 +100,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return error;
+                        return 'Email required';
                       }
                       if (!RegExp(
                         r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
@@ -135,64 +136,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     },
                   ),
                   const SizedBox(height: 48),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF6B46C1),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Registering user...'),
-                            ),
-                          );
-                          Navigator.pushReplacement(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) =>
-                                      const LoginScreen(),
-                              transitionsBuilder:
-                                  (
-                                    context,
-                                    animation,
-                                    secondaryAnimation,
-                                    child,
-                                  ) {
-                                    return FadeTransition(
-                                      opacity: animation,
-                                      child: child,
-                                    );
-                                  },
-                            ),
-                          );
-                          ref
-                              .read(authViewModelProvider.notifier)
-                              .register(
-                                fullName: userNameController.text,
-                                email: emailController.text,
-                                username: userNameController.text,
-                                password: passwordController.text,
-                              );
-                        }
-                      },
-                      child: const Text(
-                        'Register',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                  GradientButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        ref
+                            .read(authViewModelProvider.notifier)
+                            .register(
+                              fullName: userNameController.text,
+                              email: emailController.text,
+                              username: usernameController.text,
+                              password: passwordController.text,
+                            );
+                      }
+                    },
+                    text: 'Register',
+                    isLoading: authState.status == AuthStatus.loading,
                   ),
-
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -222,7 +181,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           );
                         },
                         style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFFFFFFFF),
+                          foregroundColor: const Color(0xFF6B46C1),
                         ),
                         child: const Text(
                           'Login',

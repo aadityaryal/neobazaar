@@ -134,6 +134,17 @@ class AppTheme {
           return Colors.transparent;
         }),
       ),
+
+      // Snackbar Theme
+      snackBarTheme: SnackBarThemeData(
+        contentTextStyle: const TextStyle(
+          fontFamily: 'Inter',
+          color: AppColors.textPrimary,
+          fontSize: 14,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        behavior: SnackBarBehavior.floating,
+      ),
     );
   }
 

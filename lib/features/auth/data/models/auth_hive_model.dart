@@ -8,7 +8,7 @@ part 'auth_hive_model.g.dart';
 @HiveType(typeId: HiveTableConstant.authTypeId)
 class AuthHiveModel extends HiveObject {
   @HiveField(0)
-  final String? authId;
+  final String authId;
   @HiveField(1)
   final String fullName;
   @HiveField(2)

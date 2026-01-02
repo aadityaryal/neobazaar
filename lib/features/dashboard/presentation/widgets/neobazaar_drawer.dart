@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:neobazaar/features/auth/presentation/pages/login_screen.dart';
 class NeoBazaarDrawer extends StatelessWidget {
   const NeoBazaarDrawer({super.key});
 
@@ -32,11 +32,15 @@ class NeoBazaarDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text("Logout"),
             onTap: () {
-              Navigator.pop(context);
-              // TODO: Handle logout
-            },
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (route) => false,
+                );
+              },
           ),
         ],
+
       ),
     );
   }

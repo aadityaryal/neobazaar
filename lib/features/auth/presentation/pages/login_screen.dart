@@ -1,9 +1,12 @@
+// filepath: lib/features/auth/presentation/pages/login_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:neobazaar/core/widgets/gradient_button.dart';
 import 'package:neobazaar/features/dashboard/presentation/pages/dashboard_screen.dart';
 import 'package:neobazaar/features/auth/presentation/pages/register_screen.dart';
 import 'package:neobazaar/features/auth/presentation/state/auth_state.dart';
 import 'package:neobazaar/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:neobazaar/core/utils/snackbar_utils.dart'; // Add this import
 import '../widgets/my_textformfield.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -17,17 +20,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  late String error;
+  bool _messageShown = false;
 
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
 
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
-      if (next.status == AuthStatus.authenticated) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Login successful!')));
+      if (next.status == AuthStatus.loading) {
+        _messageShown = false; // Reset for new attempt
+      } else if (next.status == AuthStatus.authenticated && !_messageShown) {
+        SnackbarUtils.showSuccess(context, 'Login successful!');
+        _messageShown = true;
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
@@ -39,10 +43,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 },
           ),
         );
-      } else if (next.status == AuthStatus.error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.errorMessage ?? 'Login failed')),
-        );
+      } else if (next.status == AuthStatus.error && !_messageShown) {
+        SnackbarUtils.showError(context, next.errorMessage ?? 'Login failed');
+        _messageShown = true;
       }
     });
 
@@ -60,7 +63,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Image.asset(
                     'assets/images/onboarding/NeoBazaar_Logo.png',
                     height: 100,
-                  ), // Added logo
+                  ),
                   const SizedBox(height: 24),
                   const Text(
                     'Login to NeoBazaar',
@@ -68,20 +71,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       color: Color(0xFF6B46C1),
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                    ), // Changed to purple for title
+                    ),
                   ),
                   const SizedBox(height: 48),
                   MyTextFormField(
                     controller: emailController,
                     label: 'Email',
-
                     hint: 'Enter email (e.g., user@neobazaar.np)',
                     error: 'Email required',
                     keyboardType: TextInputType.emailAddress,
-
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return error;
+                        return 'Email required';
                       }
                       if (!RegExp(
                         r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
@@ -100,40 +101,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     obscureText: true,
                   ),
                   const SizedBox(height: 48),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(
-                          0xFF6B46C1,
-                        ), // Changed to purple for button
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Logging in...')),
-                          );
-                          ref
-                              .read(authViewModelProvider.notifier)
-                              .login(
-                                email: emailController.text,
-                                password: passwordController.text,
-                              );
-                        }
-                      },
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                  GradientButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        // Removed manual snackbar here to prevent duplicates
+                        ref
+                            .read(authViewModelProvider.notifier)
+                            .login(
+                              email: emailController.text,
+                              password: passwordController.text,
+                            );
+                      }
+                    },
+                    text: 'Login',
+                    isLoading:
+                        authState.status ==
+                        AuthStatus.loading, // Add loading state
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -167,9 +150,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           );
                         },
                         style: TextButton.styleFrom(
-                          foregroundColor: const Color(
-                            0xFFFFFFFF,
-                          ), // Changed to orange for link
+                          foregroundColor: const Color(0xFFFFFFFF),
                         ),
                         child: const Text(
                           'Register',

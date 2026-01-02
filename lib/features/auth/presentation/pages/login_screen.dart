@@ -27,9 +27,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final authState = ref.watch(authViewModelProvider);
 
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
-      if (next.status == AuthStatus.loading) {
-        _messageShown = false; // Reset for new attempt
-      } else if (next.status == AuthStatus.authenticated && !_messageShown) {
+      if (next.status == AuthStatus.authenticated && !_messageShown) {
         SnackbarUtils.showSuccess(context, 'Login successful!');
         _messageShown = true;
         Navigator.pushReplacement(
@@ -104,6 +102,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   GradientButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
+                        _messageShown = false; // Reset for new attempt
                         // Removed manual snackbar here to prevent duplicates
                         ref
                             .read(authViewModelProvider.notifier)

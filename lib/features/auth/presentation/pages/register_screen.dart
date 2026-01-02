@@ -30,9 +30,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final authState = ref.watch(authViewModelProvider);
 
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
-      if (next.status == AuthStatus.loading) {
-        _messageShown = false; // Reset for new attempt
-      } else if (next.status == AuthStatus.registered && !_messageShown) {
+      if (next.status == AuthStatus.registered && !_messageShown) {
         SnackbarUtils.showSuccess(
           context,
           'Registration successful! Please login.',
@@ -139,6 +137,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   GradientButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
+                        _messageShown = false; // Reset for new attempt
                         ref
                             .read(authViewModelProvider.notifier)
                             .register(

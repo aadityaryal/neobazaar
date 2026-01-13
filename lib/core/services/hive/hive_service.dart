@@ -7,7 +7,6 @@ import 'package:path_provider/path_provider.dart';
 // Provider
 final hiveServiceProvider = Provider<HiveService>((ref) {
   final hiveService = HiveService();
-  hiveService.init();
   return hiveService;
 });
 
@@ -44,7 +43,6 @@ class HiveService {
     await Hive.close();
   }
 
-
   // =======================Auth Queries=============================
   Box<AuthHiveModel> get _authBox =>
       Hive.box<AuthHiveModel>(HiveTableConstant.authTable);
@@ -54,8 +52,8 @@ class HiveService {
     return model;
   }
 
-  // login 
-  Future<AuthHiveModel?> loginUser(String email, String password) async {
+  // login
+  Future<AuthHiveModel?> login(String email, String password) async {
     final users = _authBox.values.where(
       (user) => user.email == email && user.password == password,
     );
@@ -65,17 +63,30 @@ class HiveService {
     return null;
   }
 
-  // logout 
+  // logout
   Future<void> logoutUser() async {}
-  // get current user 
+  // get current user
   AuthHiveModel? getCurrentUser(String authId) {
     return _authBox.get(authId);
   }
+
   // check email exists
   bool isEmailExists(String email) {
-    final users = _authBox.values.where(
-      (user) => user.email == email,
-    );
+    final users = _authBox.values.where((user) => user.email == email);
     return users.isNotEmpty;
   }
+
+    AuthHiveModel? getUserByEmail(String email) {
+    try {
+      final users = _authBox.values.where(
+        (user) => user.email == email,
+      );
+      return users.isNotEmpty ? users.first : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Check if email exists
+
 }

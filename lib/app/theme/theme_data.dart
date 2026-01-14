@@ -16,8 +16,6 @@ ThemeData appTheme() {
     useMaterial3: true,
     colorScheme: colorScheme,
     brightness: Brightness.dark,
-
-    // ✅ Material 3 compliant
     scaffoldBackgroundColor: backgroundColor,
 
     appBarTheme: AppBarTheme(

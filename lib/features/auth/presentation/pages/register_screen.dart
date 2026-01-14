@@ -145,6 +145,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               email: emailController.text,
                               username: usernameController.text,
                               password: passwordController.text,
+                              confirmPassword: confirmPasswordController.text,
                             );
                       }
                     },

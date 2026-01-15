@@ -35,7 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     },
     {
       "title": "Earn NeoTokens",
-      "desc": "List items → Get rewards → Top the leaderboard",
+      "desc": "List items -> Get rewards -> Top the leaderboard",
       "image": "assets/images/onboarding/EarnNeoTokens.png",
     },
   ];

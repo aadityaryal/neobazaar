@@ -1,32 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:neobazaar/core/services/storage/user_session_service.dart';
+import 'package:neobazaar/features/dashboard/presentation/pages/dashboard_screen.dart';
 import 'package:neobazaar/features/onboarding/presentation/pages/onboarding_screen.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                const OnboardingScreen(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-          ),
-        );
+        _checkUserSessionAndNavigate();
       }
     });
+  }
+
+  void _checkUserSessionAndNavigate() {
+    final userSessionService = ref.read(userSessionServiceProvider);
+    final isLoggedIn = userSessionService.isLoggedIn();
+
+    final destination = isLoggedIn
+        ? const DashboardScreen()
+        : const OnboardingScreen();
+
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => destination,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
   }
 
   @override

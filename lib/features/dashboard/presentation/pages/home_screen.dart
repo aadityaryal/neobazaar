@@ -63,12 +63,11 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final crossAxisCount =
-        screenWidth > 900
-            ? 4
-            : screenWidth > 600
-            ? 3
-            : 2;
+    final crossAxisCount = screenWidth > 900
+        ? 4
+        : screenWidth > 600
+        ? 3
+        : 2;
     return SizedBox.expand(
       child: Scaffold(
         drawer: const NeoBazaarDrawer(),
@@ -83,7 +82,6 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🔥 Streak + Tokens row (NEW)
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,

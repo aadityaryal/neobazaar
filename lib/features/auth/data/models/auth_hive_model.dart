@@ -8,7 +8,7 @@ part 'auth_hive_model.g.dart';
 @HiveType(typeId: HiveTableConstant.authTypeId)
 class AuthHiveModel extends HiveObject {
   @HiveField(0)
-  final String authId;
+  final String? authId;
   @HiveField(1)
   final String fullName;
   @HiveField(2)
@@ -32,10 +32,10 @@ class AuthHiveModel extends HiveObject {
   @HiveField(11)
   final String? location;
   @HiveField(12)
-  final String? profileImage;
+  final String? profilePicture;
 
   AuthHiveModel({
-    String? userId,
+    String? authId,
     required this.fullName,
     required this.email,
     this.phoneNumber,
@@ -46,9 +46,9 @@ class AuthHiveModel extends HiveObject {
     int? reputationScore,
     bool? kycVerified,
     List<String>? badges,
-    required this.location,
-    required this.profileImage,
-  }) : authId = userId ?? Uuid().v4(),
+    this.location,
+    this.profilePicture,
+  }) : authId = authId ?? Uuid().v4(),
        neoTokens = neoTokens ?? 0,
        xp = xp ?? 0,
        reputationScore = reputationScore ?? 0,
@@ -58,7 +58,7 @@ class AuthHiveModel extends HiveObject {
   // from Entity
   factory AuthHiveModel.fromEntity(AuthEntity entity) {
     return AuthHiveModel(
-      userId: entity.userId,
+      authId: entity.authId,
       fullName: entity.fullName,
       email: entity.email,
       phoneNumber: entity.phoneNumber,
@@ -70,14 +70,14 @@ class AuthHiveModel extends HiveObject {
       kycVerified: entity.kycVerified,
       badges: entity.badges,
       location: entity.location,
-      profileImage: entity.profileImage,
+      profilePicture: entity.profilePicture,
     );
   }
 
   // To Entity
   AuthEntity toEntity() {
     return AuthEntity(
-      userId: authId,
+      authId: authId,
       fullName: fullName,
       email: email,
       phoneNumber: phoneNumber,
@@ -89,7 +89,7 @@ class AuthHiveModel extends HiveObject {
       kycVerified: kycVerified,
       badges: badges,
       location: location,
-      profileImage: profileImage,
+      profilePicture: profilePicture,
     );
   }
 

@@ -17,7 +17,7 @@ class AuthHiveModelAdapter extends TypeAdapter<AuthHiveModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return AuthHiveModel(
-      userId: fields[0] as String?,
+      authId: fields[0] as String?,
       fullName: fields[1] as String,
       email: fields[2] as String,
       phoneNumber: fields[3] as String?,
@@ -29,7 +29,7 @@ class AuthHiveModelAdapter extends TypeAdapter<AuthHiveModel> {
       kycVerified: fields[9] as bool?,
       badges: (fields[10] as List?)?.cast<String>(),
       location: fields[11] as String?,
-      profileImage: fields[12] as String?,
+      profilePicture: fields[12] as String?,
     );
   }
 
@@ -62,7 +62,7 @@ class AuthHiveModelAdapter extends TypeAdapter<AuthHiveModel> {
       ..writeByte(11)
       ..write(obj.location)
       ..writeByte(12)
-      ..write(obj.profileImage);
+      ..write(obj.profilePicture);
   }
 
   @override

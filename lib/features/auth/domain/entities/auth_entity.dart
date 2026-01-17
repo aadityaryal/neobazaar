@@ -12,6 +12,7 @@ class AuthEntity extends Equatable {
   final int? reputationScore;
   final bool? kycVerified;
   final List<String>? badges;
+  final String? campus;
   final String? location;
   final String? profilePicture;
 
@@ -27,6 +28,7 @@ class AuthEntity extends Equatable {
     this.reputationScore,
     this.kycVerified,
     this.badges,
+    this.campus,
     this.location,
     this.profilePicture,
   });
@@ -44,6 +46,7 @@ class AuthEntity extends Equatable {
     reputationScore,
     kycVerified,
     badges,
+    campus,
     location,
     profilePicture,
   ];

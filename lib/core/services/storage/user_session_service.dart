@@ -1,12 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:neobazaar/core/providers/shared_prefs_provider.dart';
+import 'package:neobazaar/features/auth/data/models/local_session_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-//Shared prefs provider
-final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError(
-    "Shared prefs lai hamile main.dart ma initialize garicha ",
-  );
-});
 
 //provider
 final userSessionServiceProvider = Provider<UserSessionService>((ref) {
@@ -26,6 +21,9 @@ class UserSessionService {
   static const String _keyUserFullName = 'user_full_name';
   static const String _keyUserPhoneNumber = 'user_phone_number';
   static const String _keyUserProfileImage = 'user_profile_image';
+  static const String _keyAuthToken = 'auth_token';
+  static const String _keyNeoTokens = 'neo_tokens';
+  static const String _keyXp = 'xp';
 
   //Store user session data
   Future<void> saveUserSession({
@@ -35,6 +33,9 @@ class UserSessionService {
     required String fullName,
     required String? phoneNumber,
     String? profileImage,
+    String? authToken,
+    int? neoTokens,
+    int? xp,
   }) async {
     await _prefs.setBool(_keysIsLoggedIn, true);
     await _prefs.setString(_keyUserId, userId);
@@ -47,6 +48,15 @@ class UserSessionService {
     if (profileImage != null) {
       await _prefs.setString(_keyUserProfileImage, profileImage);
     }
+    if (authToken != null && authToken.isNotEmpty) {
+      await _prefs.setString(_keyAuthToken, authToken);
+    }
+    if (neoTokens != null) {
+      await _prefs.setInt(_keyNeoTokens, neoTokens);
+    }
+    if (xp != null) {
+      await _prefs.setInt(_keyXp, xp);
+    }
   }
 
   //Clear user session data
@@ -58,6 +68,17 @@ class UserSessionService {
     await _prefs.remove(_keyUserId);
     await _prefs.remove(_keysIsLoggedIn);
     await _prefs.remove(_keyUserProfileImage);
+    await _prefs.remove(_keyAuthToken);
+    await _prefs.remove(_keyNeoTokens);
+    await _prefs.remove(_keyXp);
+  }
+
+  Future<void> saveAuthToken(String token) async {
+    await _prefs.setString(_keyAuthToken, token);
+  }
+
+  String? getAuthToken() {
+    return _prefs.getString(_keyAuthToken);
   }
 
   bool isLoggedIn() {
@@ -88,5 +109,32 @@ class UserSessionService {
     return _prefs.getString(_keyUserProfileImage);
   }
 
-  getCurrentUserId() {}
+  String? getCurrentUserId() {
+    return getUserId();
+  }
+
+  int? getNeoTokens() {
+    return _prefs.getInt(_keyNeoTokens);
+  }
+
+  int? getXp() {
+    return _prefs.getInt(_keyXp);
+  }
+
+  Future<void> saveNeoTokens(int neoTokens) async {
+    await _prefs.setInt(_keyNeoTokens, neoTokens);
+  }
+
+  Future<void> saveXp(int xp) async {
+    await _prefs.setInt(_keyXp, xp);
+  }
+
+  LocalSessionModel getLocalSession() {
+    return LocalSessionModel(
+      isLoggedIn: isLoggedIn(),
+      userId: getUserId(),
+      email: getUserEmail(),
+      username: getUsername(),
+    );
+  }
 }

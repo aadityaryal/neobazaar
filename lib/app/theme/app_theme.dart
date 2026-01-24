@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'app_colors.dart';
+import 'package:neobazaar/app/theme/app_colors.dart';
 
 class AppTheme {
   static ThemeData get lightTheme {
@@ -38,11 +38,11 @@ class AppTheme {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: AppColors.border, width: 1),
+          borderSide: const BorderSide(color: AppColors.border, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: AppColors.border, width: 1),
+          borderSide: const BorderSide(color: AppColors.border, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -105,7 +105,7 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          side: BorderSide(color: AppColors.border, width: 1.5),
+          side: const BorderSide(color: AppColors.border, width: 1.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -184,11 +184,11 @@ class AppTheme {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: AppColors.darkBorder, width: 1),
+          borderSide: const BorderSide(color: AppColors.darkBorder, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: AppColors.darkBorder, width: 1),
+          borderSide: const BorderSide(color: AppColors.darkBorder, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -265,7 +265,7 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.darkTextPrimary,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          side: BorderSide(color: AppColors.darkBorder, width: 1.5),
+          side: const BorderSide(color: AppColors.darkBorder, width: 1.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

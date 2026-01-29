@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:neobazaar/core/constants/app_constants.dart';
 
 abstract interface class INetworkInfo {
   Future<bool> get isConnected;
@@ -19,21 +20,30 @@ class NetworkInfo implements INetworkInfo {
   NetworkInfo(this._connectivity);
 
   @override
-  // TODO: implement isConnected
   Future<bool> get isConnected async {
-    final result = await _connectivity
-        .checkConnectivity(); //wife or mobile data
+    final result = await _connectivity.checkConnectivity();
     if (result.contains(ConnectivityResult.none)) {
       return false;
     }
-    // return true;
-    return await _sacchiKaiInternetChaKiNai();
+
+    return _hasInternetReachability();
   }
 
-  Future<bool> _sacchiKaiInternetChaKiNai() async {
+  Future<bool> _hasInternetReachability() async {
+    final backendHost = Uri.tryParse(AppConstants.apiBaseUrl)?.host;
+    final probes = <String>[
+      if (backendHost != null && backendHost.isNotEmpty) backendHost,
+      'example.com',
+    ];
+
     try {
-      final result = await InternetAddress.lookup('google.com');
-      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+      for (final host in probes) {
+        final result = await InternetAddress.lookup(host);
+        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+          return true;
+        }
+      }
+      return false;
     } on SocketException {
       return false;
     }

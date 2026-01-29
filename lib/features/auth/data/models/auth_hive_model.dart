@@ -48,7 +48,7 @@ class AuthHiveModel extends HiveObject {
     List<String>? badges,
     this.location,
     this.profilePicture,
-  }) : authId = authId ?? Uuid().v4(),
+  }) : authId = authId ?? const Uuid().v4(),
        neoTokens = neoTokens ?? 0,
        xp = xp ?? 0,
        reputationScore = reputationScore ?? 0,

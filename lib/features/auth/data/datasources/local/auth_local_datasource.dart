@@ -80,13 +80,13 @@
 
 //   @override
 //   Future<AuthHiveModel?> getUserByEmail(String email) {
-//     // TODO: implement getUserByEmail
+//     // Pending implementation: getUserByEmail
 //     throw UnimplementedError();
 //   }
 
 //   @override
 //   Future<AuthHiveModel> getUserById(String authId) {
-//     // TODO: implement getUserById
+//     // Pending implementation: getUserById
 //     throw UnimplementedError();
 //   }
 // }
@@ -118,9 +118,16 @@ class AuthLocalDatasource implements IAuthLocalDataSource {
        _userSessionService = userSessionService;
 
   @override
-  Future<AuthHiveModel?> getCurrentUser() {
-    // TODO: implement getCurrentUser
-    throw UnimplementedError();
+  Future<AuthHiveModel?> getCurrentUser() async {
+    try {
+      final userId = _userSessionService.getUserId();
+      if (userId == null || userId.isEmpty) {
+        return null;
+      }
+      return _hiveService.getCurrentUser(userId);
+    } catch (e) {
+      return null;
+    }
   }
 
   @override
@@ -158,6 +165,7 @@ class AuthLocalDatasource implements IAuthLocalDataSource {
   Future<bool> logout() async {
     try {
       await _hiveService.logoutUser();
+      await _userSessionService.clearUserSession();
       return Future.value(true);
     } catch (e) {
       return Future.value(false);
@@ -185,7 +193,10 @@ class AuthLocalDatasource implements IAuthLocalDataSource {
 
   @override
   Future<AuthHiveModel> getUserById(String authId) {
-    // TODO: implement getUserById
-    throw UnimplementedError();
+    final user = _hiveService.getCurrentUser(authId);
+    if (user == null) {
+      throw Exception('User not found for id: $authId');
+    }
+    return Future.value(user);
   }
 }

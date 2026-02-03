@@ -5,19 +5,21 @@ import 'package:neobazaar/core/usecases/app_usecase.dart';
 import 'package:neobazaar/features/auth/data/repositories/auth_repository.dart';
 import 'package:neobazaar/features/auth/domain/repositories/auth_categories.dart';
 
-final logoutUsecaseProvider = Provider<LogoutUsecase>((ref) {
+final revokeAllSessionsUsecaseProvider = Provider<RevokeAllSessionsUsecase>((
+  ref,
+) {
   final authRepository = ref.read(authRepositoryProvider);
-  return LogoutUsecase(authRepository: authRepository);
+  return RevokeAllSessionsUsecase(authRepository: authRepository);
 });
 
-class LogoutUsecase implements UsecaseWithoutParams<bool> {
+class RevokeAllSessionsUsecase implements UsecaseWithoutParams<bool> {
   final IAuthRepository _authRepository;
 
-  LogoutUsecase({required IAuthRepository authRepository})
+  RevokeAllSessionsUsecase({required IAuthRepository authRepository})
     : _authRepository = authRepository;
 
   @override
   Future<Either<Failure, bool>> call() {
-    return _authRepository.logout();
+    return _authRepository.revokeAllSessions();
   }
 }

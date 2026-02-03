@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neobazaar/core/error/failures.dart';
 import 'package:neobazaar/core/usecases/app_usecase.dart';
-import 'package:neobazaar/features/auth/data/repositories/auth_repositorY.dart';
+import 'package:neobazaar/features/auth/data/repositories/auth_repository.dart';
 import 'package:neobazaar/features/auth/domain/entities/auth_entity.dart';
 import 'package:neobazaar/features/auth/domain/repositories/auth_categories.dart';
 
@@ -12,29 +12,40 @@ class RegisterUsecaseParams extends Equatable {
   final String email;
   final String username;
   final String password;
+  final String? location;
+  final String? idempotencyKey;
 
   const RegisterUsecaseParams({
     required this.fullName,
     required this.email,
     required this.username,
     required this.password,
+    this.location,
+    this.idempotencyKey,
   });
 
   @override
-  List<Object?> get props => [fullName, email, username, password];
+  List<Object?> get props => [
+    fullName,
+    email,
+    username,
+    password,
+    location,
+    idempotencyKey,
+  ];
 }
 
-// Provider 
-final registerUsecaseProvider = Provider<RegisterUsecase>((ref){
+// Provider
+final registerUsecaseProvider = Provider<RegisterUsecase>((ref) {
   final authRepository = ref.read(authRepositoryProvider);
   return RegisterUsecase(authRepository: authRepository);
 });
 
-
-class RegisterUsecase implements UsecaseWithParams<bool, RegisterUsecaseParams>{
+class RegisterUsecase
+    implements UsecaseWithParams<bool, RegisterUsecaseParams> {
   final IAuthRepository _authRepository;
   RegisterUsecase({required IAuthRepository authRepository})
-  : _authRepository = authRepository;
+    : _authRepository = authRepository;
 
   @override
   Future<Either<Failure, bool>> call(RegisterUsecaseParams params) {
@@ -43,8 +54,11 @@ class RegisterUsecase implements UsecaseWithParams<bool, RegisterUsecaseParams>{
       email: params.email,
       username: params.username,
       password: params.password,
+      location: params.location,
     );
-    return _authRepository.register(entity);
+    return _authRepository.register(
+      entity,
+      idempotencyKey: params.idempotencyKey,
+    );
   }
-  
 }

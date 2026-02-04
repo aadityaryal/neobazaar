@@ -1,12 +1,16 @@
 import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:neobazaar/core/utils/snackbar_utils.dart';
 import 'package:neobazaar/core/widgets/gradient_button.dart';
 import 'package:neobazaar/features/auth/presentation/pages/login_screen.dart';
 import 'package:neobazaar/features/auth/presentation/state/auth_state.dart';
+import 'package:neobazaar/features/auth/presentation/state/register_form_state.dart';
 import 'package:neobazaar/features/auth/presentation/view_model/auth_view_model.dart';
-import 'package:neobazaar/core/utils/snackbar_utils.dart';
-import '../widgets/my_textformfield.dart';
+import 'package:neobazaar/features/auth/presentation/widgets/auth_error_banner.dart';
+import 'package:neobazaar/features/auth/presentation/widgets/auth_form_skeleton.dart';
+import 'package:neobazaar/features/auth/presentation/widgets/my_textformfield.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -23,11 +27,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final TextEditingController locationController = TextEditingController();
   bool _messageShown = false;
+
+  @override
+  void dispose() {
+    userNameController.dispose();
+    usernameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    locationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
+    final registerFormState = ref.watch(registerFormStateProvider);
 
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (next.status == AuthStatus.registered && !_messageShown) {
@@ -67,13 +84,34 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  if (authState.status == AuthStatus.loading)
+                    const AuthFormSkeleton(),
+                  if (authState.status != AuthStatus.loading) ...[
+                    if (authState.status == AuthStatus.error &&
+                        (authState.errorMessage?.isNotEmpty ?? false))
+                      AuthErrorBanner(
+                        message: authState.errorMessage!,
+                        onRetry: () {
+                          if (_formKey.currentState!.validate()) {
+                            _messageShown = false;
+                            ref
+                                .read(authViewModelProvider.notifier)
+                                .register(
+                                  fullName: userNameController.text,
+                                  email: emailController.text,
+                                  username: usernameController.text,
+                                  password: passwordController.text,
+                                  confirmPassword:
+                                      confirmPasswordController.text,
+                                  location: locationController.text,
+                                );
+                          }
+                        },
+                      ),
+                  ],
                   const Text(
                     'Register for NeoBazaar',
-                    style: TextStyle(
-                      color: Color(0xFF6B46C1),
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 48),
                   MyTextFormField(
@@ -81,6 +119,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     label: "Full Name",
                     hint: "Enter your full name.",
                     error: "Name required",
+                    onChanged: (value) {
+                      ref
+                          .read(registerFormStateProvider.notifier)
+                          .setFullName(value);
+                    },
+                    validator: (_) => registerFormState.fullNameError,
+                    semanticLabel: 'Register full name input',
                   ),
                   const SizedBox(height: 24),
                   MyTextFormField(
@@ -88,6 +133,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     label: "Username",
                     hint: "Enter your username.",
                     error: "Username required",
+                    onChanged: (value) {
+                      ref
+                          .read(registerFormStateProvider.notifier)
+                          .setUsername(value);
+                    },
+                    validator: (_) => registerFormState.usernameError,
+                    semanticLabel: 'Register username input',
                   ),
                   const SizedBox(height: 24),
                   MyTextFormField(
@@ -96,17 +148,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     hint: 'Enter email',
                     error: 'Email required',
                     keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Email required';
-                      }
-                      if (!RegExp(
-                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                      ).hasMatch(value)) {
-                        return 'Invalid email format';
-                      }
-                      return null;
+                    onChanged: (value) {
+                      ref
+                          .read(registerFormStateProvider.notifier)
+                          .setEmail(value);
                     },
+                    validator: (_) => registerFormState.emailError,
+                    semanticLabel: 'Register email input',
                   ),
                   const SizedBox(height: 24),
                   MyTextFormField(
@@ -115,6 +163,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     hint: 'Enter secure password',
                     error: 'Password required',
                     obscureText: true,
+                    onChanged: (value) {
+                      ref
+                          .read(registerFormStateProvider.notifier)
+                          .setPassword(value);
+                    },
+                    validator: (_) => registerFormState.passwordError,
+                    semanticLabel: 'Register password input',
                   ),
                   const SizedBox(height: 24),
                   MyTextFormField(
@@ -123,15 +178,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     hint: 'Re-enter password',
                     error: 'Confirmation required',
                     obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Confirmation required';
-                      }
-                      if (value != passwordController.text) {
-                        return 'Passwords do not match';
-                      }
-                      return null;
+                    onChanged: (value) {
+                      ref
+                          .read(registerFormStateProvider.notifier)
+                          .setConfirmPassword(value);
                     },
+                    validator: (_) => registerFormState.confirmPasswordError,
+                    semanticLabel: 'Register confirm password input',
+                  ),
+                  const SizedBox(height: 24),
+                  MyTextFormField(
+                    controller: locationController,
+                    label: 'Location',
+                    hint: 'Enter location (optional)',
+                    error: 'Location',
+                    onChanged: (value) {
+                      ref
+                          .read(registerFormStateProvider.notifier)
+                          .setLocation(value);
+                    },
+                    semanticLabel: 'Register location input',
                   ),
                   const SizedBox(height: 48),
                   GradientButton(
@@ -146,11 +212,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               username: usernameController.text,
                               password: passwordController.text,
                               confirmPassword: confirmPasswordController.text,
+                              location: locationController.text,
                             );
                       }
                     },
                     text: 'Register',
                     isLoading: authState.status == AuthStatus.loading,
+                    semanticLabel: 'Submit registration form',
                   ),
                   const SizedBox(height: 16),
                   Row(

@@ -10,6 +10,8 @@ class MyTextFormField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.validator,
+    this.onChanged,
+    this.semanticLabel,
   });
 
   final TextEditingController controller;
@@ -19,36 +21,42 @@ class MyTextFormField extends StatelessWidget {
   final bool obscureText;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
+  final void Function(String)? onChanged;
+  final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      style: const TextStyle(color: Colors.white),
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Color(0xFF6B46C1)),
-        hintText: hint,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Color(0xFF6B46C1)),
-          borderRadius: BorderRadius.circular(12),
+    return Semantics(
+      label: semanticLabel,
+      child: TextFormField(
+        controller: controller,
+        style: const TextStyle(color: Colors.white),
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Color(0xFF6B46C1)),
+          hintText: hint,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Color(0xFF6B46C1)),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Color(0xFF6B46C1)),
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Color(0xFF6B46C1)),
-          borderRadius: BorderRadius.circular(12),
-        ),
+        onChanged: onChanged,
+        validator:
+            validator ??
+            (value) {
+              if (value == null || value.isEmpty) {
+                return error;
+              }
+              return null;
+            },
       ),
-      validator:
-          validator ??
-          (value) {
-            if (value == null || value.isEmpty) {
-              return error;
-            }
-            return null;
-          },
     );
   }
 }

@@ -31,6 +31,8 @@ class HiveService {
   Future<void> _openBoxes() async {
     // auth
     await Hive.openBox<AuthHiveModel>(HiveTableConstant.authTable);
+    await Hive.openBox<String>(HiveTableConstant.offlineMutationQueueTable);
+    await Hive.openBox<String>(HiveTableConstant.listingDraftTable);
   }
 
   // Delete all batches
@@ -76,11 +78,9 @@ class HiveService {
     return users.isNotEmpty;
   }
 
-    AuthHiveModel? getUserByEmail(String email) {
+  AuthHiveModel? getUserByEmail(String email) {
     try {
-      final users = _authBox.values.where(
-        (user) => user.email == email,
-      );
+      final users = _authBox.values.where((user) => user.email == email);
       return users.isNotEmpty ? users.first : null;
     } catch (e) {
       return null;
@@ -88,5 +88,4 @@ class HiveService {
   }
 
   // Check if email exists
-
 }

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:neobazaar/features/chat/presentation/pages/chat_inbox_page.dart';
 
 class MessageScreen extends StatelessWidget {
   const MessageScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(child: Center(child: Text("Message Screen")));
+    return const ChatInboxPage();
   }
 }

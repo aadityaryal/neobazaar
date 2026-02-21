@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../app/theme/app_colors.dart';
-import '../../../../app/theme/theme_extensions.dart';
-import '../../../../core/utils/snackbar_utils.dart';
+import 'package:neobazaar/app/theme/app_colors.dart';
+import 'package:neobazaar/app/theme/theme_extensions.dart';
+import 'package:neobazaar/core/utils/snackbar_utils.dart';
 
 class ReportItemPage extends StatefulWidget {
   const ReportItemPage({super.key});
@@ -106,7 +106,9 @@ class _ReportItemPageState extends State<ReportItemPage> {
                                 },
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 200),
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   decoration: BoxDecoration(
                                     gradient: _isLostItem
                                         ? AppColors.lostGradient
@@ -148,7 +150,9 @@ class _ReportItemPageState extends State<ReportItemPage> {
                                 },
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 200),
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   decoration: BoxDecoration(
                                     gradient: !_isLostItem
                                         ? AppColors.foundGradient
@@ -202,7 +206,7 @@ class _ReportItemPageState extends State<ReportItemPage> {
                           // Add Photo Button
                           GestureDetector(
                             onTap: () {
-                              // TODO: Implement image picker
+                              // Image picker integration pending.
                             },
                             child: Container(
                               width: 100,
@@ -228,7 +232,7 @@ class _ReportItemPageState extends State<ReportItemPage> {
                                           : AppColors.foundGradient,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: Icon(
+                                    child: const Icon(
                                       Icons.add_a_photo_rounded,
                                       color: Colors.white,
                                       size: 20,
@@ -301,7 +305,8 @@ class _ReportItemPageState extends State<ReportItemPage> {
                         spacing: 10,
                         runSpacing: 10,
                         children: _categories.map((category) {
-                          final isSelected = _selectedCategory == category['name'];
+                          final isSelected =
+                              _selectedCategory == category['name'];
                           return GestureDetector(
                             onTap: () {
                               setState(() {
@@ -317,8 +322,8 @@ class _ReportItemPageState extends State<ReportItemPage> {
                               decoration: BoxDecoration(
                                 gradient: isSelected
                                     ? (_isLostItem
-                                        ? AppColors.lostGradient
-                                        : AppColors.foundGradient)
+                                          ? AppColors.lostGradient
+                                          : AppColors.foundGradient)
                                     : null,
                                 color: isSelected ? null : Colors.white,
                                 borderRadius: BorderRadius.circular(12),
@@ -376,8 +381,9 @@ class _ReportItemPageState extends State<ReportItemPage> {
                             hintText: _isLostItem
                                 ? 'Where did you lose it?'
                                 : 'Where did you find it?',
-                            hintStyle:
-                                TextStyle(color: AppColors.textTertiary),
+                            hintStyle: const TextStyle(
+                              color: AppColors.textTertiary,
+                            ),
                             prefixIcon: Icon(
                               Icons.location_on_rounded,
                               color: context.textSecondary,
@@ -431,7 +437,7 @@ class _ReportItemPageState extends State<ReportItemPage> {
                       GestureDetector(
                         onTap: () {
                           if (_formKey.currentState!.validate()) {
-                            // TODO: Submit the form
+                            // Form submission integration pending.
                             SnackbarUtils.showSuccess(
                               context,
                               _isLostItem
@@ -463,8 +469,10 @@ class _ReportItemPageState extends State<ReportItemPage> {
                               ),
                               const SizedBox(width: 12),
                               Text(
-                                _isLostItem ? 'Report Lost Item' : 'Report Found Item',
-                                style: TextStyle(
+                                _isLostItem
+                                    ? 'Report Lost Item'
+                                    : 'Report Found Item',
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,

@@ -1,220 +1,632 @@
-import 'package:flutter/material.dart';
-import '../../../../app/theme/app_colors.dart';
-import '../../../../app/theme/theme_extensions.dart';
+import 'dart:io';
 
-class MyItemsPage extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:neobazaar/app/routes/app_routes.dart';
+import 'package:neobazaar/app/theme/app_colors.dart';
+import 'package:neobazaar/app/theme/theme_extensions.dart';
+import 'package:neobazaar/core/state/async_status.dart';
+import 'package:neobazaar/features/dashboard/presentation/pages/post_screen.dart';
+import 'package:neobazaar/features/seller/presentation/view_model/seller_studio_notifier.dart';
+
+class MyItemsPage extends ConsumerStatefulWidget {
   const MyItemsPage({super.key});
 
   @override
-  State<MyItemsPage> createState() => _MyItemsPageState();
+  ConsumerState<MyItemsPage> createState() => _MyItemsPageState();
 }
 
-class _MyItemsPageState extends State<MyItemsPage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  // Mock data for user's items
-  final List<Map<String, dynamic>> _myLostItems = [
-    {
-      'title': 'iPhone 14 Pro',
-      'location': 'Library, Block A',
-      'time': '2h ago',
-      'category': 'Electronics',
-      'status': 'active', // active, claimed, resolved
-    },
-    {
-      'title': 'Car Keys',
-      'location': 'Parking Lot',
-      'time': '5h ago',
-      'category': 'Keys',
-      'status': 'active',
-    },
-    {
-      'title': 'Apple Watch',
-      'location': 'Gym',
-      'time': '1d ago',
-      'category': 'Accessories',
-      'status': 'resolved',
-    },
-  ];
-
-  final List<Map<String, dynamic>> _myFoundItems = [
-    {
-      'title': 'Blue Backpack',
-      'location': 'Cafeteria',
-      'time': '3h ago',
-      'category': 'Bags',
-      'status': 'active',
-    },
-    {
-      'title': 'Student ID Card',
-      'location': 'Block C, Room 201',
-      'time': '1d ago',
-      'category': 'Documents',
-      'status': 'claimed',
-    },
-    {
-      'title': 'Wallet',
-      'location': 'Block B, Ground Floor',
-      'time': '2d ago',
-      'category': 'Personal',
-      'status': 'resolved',
-    },
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+class _MyItemsPageState extends ConsumerState<MyItemsPage> {
+  String _selectedMode = 'all';
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(sellerStudioNotifierProvider);
+    final allListings = state.listingsAnalytics;
+
+
+    final availableModes = <String>{
+      'all',
+      ...allListings
+          .map((item) => _normalizeMode(item['mode']?.toString()))
+          .where((mode) => mode != 'other'),
+    }.toList(growable: false);
+
+    final filteredListings = _selectedMode == 'all'
+        ? allListings
+        : allListings
+              .where((item) {
+                final mode = _normalizeMode(item['mode']?.toString());
+                return mode == _selectedMode;
+              })
+              .toList(growable: false);
+
     return Scaffold(
-      // backgroundColor: context.backgroundColor // Using theme default,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          AppRoutes.push(context, const PostScreen());
+        },
+        icon: const Icon(Icons.add_circle_outline_rounded),
+        label: const Text('Create Listing'),
+      ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'My Items',
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: context.textPrimary,
+        child: RefreshIndicator(
+          onRefresh: () =>
+              ref.read(sellerStudioNotifierProvider.notifier).loadDashboard(),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Seller Listings',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: context.textPrimary,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Track your reports',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: context.textSecondary,
+                          const SizedBox(height: 4),
+                          Text(
+                            '${filteredListings.length} listing(s) in view',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: context.textSecondary,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        ref
+                            .read(sellerStudioNotifierProvider.notifier)
+                            .loadDashboard();
+                      },
+                      tooltip: 'Refresh listings',
+                      icon: const Icon(Icons.refresh_rounded),
+                    ),
+                  ],
+                ),
+              ),
+              if (availableModes.length > 1)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: availableModes
+                          .map(
+                            (mode) => ChoiceChip(
+                              label: Text(_modeLabel(mode)),
+                              selected: _selectedMode == mode,
+                              onSelected: (_) {
+                                setState(() {
+                                  _selectedMode = mode;
+                                });
+                              },
+                            ),
+                          )
+                          .toList(growable: false),
                     ),
                   ),
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: AppColors.softShadow,
+                ),
+              Expanded(
+                child: _buildBody(
+                  context: context,
+                  status: state.status,
+                  error: state.error,
+                  listings: filteredListings,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody({
+    required BuildContext context,
+    required AsyncStatus status,
+    required String? error,
+    required List<Map<String, dynamic>> listings,
+  }) {
+    if (status == AsyncStatus.loading && listings.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (status == AsyncStatus.error && listings.isEmpty) {
+      return _StatusPane(
+        icon: Icons.error_outline_rounded,
+        title: 'Unable to load seller listings',
+        subtitle: error ?? 'Please check your connection and retry.',
+        actionLabel: 'Retry',
+        onAction: () {
+          ref.read(sellerStudioNotifierProvider.notifier).loadDashboard();
+        },
+      );
+    }
+
+    if (listings.isEmpty) {
+      return const _StatusPane(
+        icon: Icons.inventory_2_outlined,
+        title: 'No listings yet',
+        subtitle: 'Create your first listing from Seller Studio.',
+      );
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+      itemCount: listings.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final listing = listings[index];
+        return _ListingCard(listing: listing);
+      },
+    );
+  }
+
+  String _normalizeMode(String? value) {
+    final normalized = (value ?? '').trim().toLowerCase();
+    if (normalized.isEmpty) {
+      return 'other';
+    }
+
+    switch (normalized) {
+      case 'buy_now':
+      case 'buynow':
+      case 'buy now':
+      case 'fixed':
+        return 'buy_now';
+      case 'auction':
+      case 'bid':
+      case 'bidding':
+        return 'auction';
+      case 'donate':
+      case 'donation':
+        return 'donate';
+      default:
+        return 'other';
+    }
+  }
+
+  String _modeLabel(String mode) {
+    switch (mode) {
+      case 'all':
+        return 'All';
+      case 'buy_now':
+        return 'Buy Now';
+      case 'auction':
+        return 'Auction';
+      case 'donate':
+        return 'Donate';
+      default:
+        return 'Other';
+    }
+  }
+}
+
+class _ListingCard extends StatelessWidget {
+  final Map<String, dynamic> listing;
+
+  const _ListingCard({required this.listing});
+
+  @override
+  Widget build(BuildContext context) {
+    final title = listing['title']?.toString().trim();
+    final thumbnailUrl = _extractThumbnailUrl(listing);
+    final mode = _normalizeMode(listing['mode']?.toString());
+    final status = listing['status']?.toString().trim();
+    final category = listing['category']?.toString().trim();
+    final location = listing['location']?.toString().trim();
+    final createdAt = _formatCreatedAt(listing['createdAt']?.toString());
+    final listedPrice = _parseAmount(
+      listing['priceListed'] ?? listing['price'] ?? listing['aiSuggestedPrice'],
+    );
+    final hasViews = listing.containsKey('views');
+    final hasClicks = listing.containsKey('clicks');
+    final views = _parseCount(listing['views']);
+    final clicks = _parseCount(listing['clicks']);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: context.surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: context.borderColor),
+        boxShadow: context.softShadow,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: SizedBox(
+                        width: 42,
+                        height: 42,
+                        child: _ListingImage(imageUrl: thumbnailUrl),
+                      ),
                     ),
-                    child: Icon(
-                      Icons.sort_rounded,
+                    Positioned(
+                      right: -1,
+                      bottom: -1,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: _modeColor(mode),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: context.surfaceColor,
+                            width: 1.5,
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(3),
+                        child: Icon(_modeIcon(mode), color: Colors.white, size: 10),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title == null || title.isEmpty ? 'Untitled Listing' : title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: context.textPrimary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _InfoChip(
+                  icon: Icons.category_rounded,
+                  text: _modeLabel(mode),
+                  color: _modeColor(mode),
+                ),
+                if (status != null && status.isNotEmpty)
+                  _InfoChip(
+                    icon: Icons.flag_rounded,
+                    text: status,
+                    color: AppColors.info,
+                  ),
+                if (category != null && category.isNotEmpty)
+                  _InfoChip(
+                    icon: Icons.sell_rounded,
+                    text: category,
+                    color: AppColors.secondary,
+                  ),
+              ],
+            ),
+            if (createdAt != null) ...[
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Icon(
+                    Icons.schedule_rounded,
+                    size: 14,
+                    color: context.textSecondary,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    createdAt,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: context.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                _MetricTile(
+                  icon: Icons.currency_rupee_rounded,
+                  label: 'Listed Price',
+                  value: listedPrice == null ? '-' : 'Rs. $listedPrice',
+                ),
+                const SizedBox(width: 10),
+                _MetricTile(
+                  icon: Icons.location_on_rounded,
+                  label: 'Location',
+                  value: (location == null || location.isEmpty)
+                      ? '-'
+                      : location,
+                ),
+              ],
+            ),
+            if (hasViews || hasClicks) ...[
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  _MetricTile(
+                    icon: Icons.visibility_rounded,
+                    label: 'Views',
+                    value: '$views',
+                  ),
+                  const SizedBox(width: 10),
+                  _MetricTile(
+                    icon: Icons.ads_click_rounded,
+                    label: 'Clicks',
+                    value: '$clicks',
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  static int _parseCount(dynamic value) {
+    if (value is int) {
+      return value;
+    }
+    if (value is num) {
+      return value.toInt();
+    }
+    return int.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  static String? _parseAmount(dynamic value) {
+    if (value is int) {
+      return value.toString();
+    }
+    if (value is double) {
+      return value == value.roundToDouble()
+          ? value.toInt().toString()
+          : value.toStringAsFixed(2);
+    }
+    if (value is num) {
+      final asDouble = value.toDouble();
+      return asDouble == asDouble.roundToDouble()
+          ? asDouble.toInt().toString()
+          : asDouble.toStringAsFixed(2);
+    }
+
+    final raw = value?.toString().trim();
+    if (raw == null || raw.isEmpty) {
+      return null;
+    }
+    final parsed = num.tryParse(raw);
+    if (parsed == null) {
+      return raw;
+    }
+    final asDouble = parsed.toDouble();
+    return asDouble == asDouble.roundToDouble()
+        ? asDouble.toInt().toString()
+        : asDouble.toStringAsFixed(2);
+  }
+
+  static String? _formatCreatedAt(String? raw) {
+    if (raw == null || raw.trim().isEmpty) {
+      return null;
+    }
+
+    final parsed = DateTime.tryParse(raw);
+    if (parsed == null) {
+      return raw;
+    }
+
+    final local = parsed.toLocal();
+    final month = local.month.toString().padLeft(2, '0');
+    final day = local.day.toString().padLeft(2, '0');
+    return 'Created ${local.year}-$month-$day';
+  }
+
+  static String _normalizeMode(String? value) {
+    final normalized = (value ?? '').trim().toLowerCase();
+    switch (normalized) {
+      case 'buy_now':
+      case 'buynow':
+      case 'buy now':
+      case 'fixed':
+        return 'buy_now';
+      case 'auction':
+      case 'bid':
+      case 'bidding':
+        return 'auction';
+      case 'donate':
+      case 'donation':
+        return 'donate';
+      default:
+        return 'other';
+    }
+  }
+
+  static String? _extractThumbnailUrl(Map<String, dynamic> item) {
+    final images = item['images'];
+    if (images is List && images.isNotEmpty) {
+      final first = images.first;
+      final asText = first?.toString().trim();
+      if (asText != null && asText.isNotEmpty) {
+        return asText;
+      }
+    }
+    return null;
+  }
+
+  static String _modeLabel(String mode) {
+    switch (mode) {
+      case 'buy_now':
+        return 'Buy Now';
+      case 'auction':
+        return 'Auction';
+      case 'donate':
+        return 'Donate';
+      default:
+        return 'Other';
+    }
+  }
+
+  static IconData _modeIcon(String mode) {
+    switch (mode) {
+      case 'buy_now':
+        return Icons.shopping_bag_rounded;
+      case 'auction':
+        return Icons.gavel_rounded;
+      case 'donate':
+        return Icons.volunteer_activism_rounded;
+      default:
+        return Icons.inventory_2_rounded;
+    }
+  }
+
+  static Color _modeColor(String mode) {
+    switch (mode) {
+      case 'buy_now':
+        return AppColors.info;
+      case 'auction':
+        return AppColors.warning;
+      case 'donate':
+        return AppColors.success;
+      default:
+        return AppColors.textSecondary;
+    }
+  }
+}
+
+class _ListingImage extends StatelessWidget {
+  final String? imageUrl;
+
+  const _ListingImage({required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    if (imageUrl == null || imageUrl!.isEmpty) {
+      return const ColoredBox(
+        color: Colors.black12,
+        child: Center(child: Icon(Icons.image_outlined, size: 18)),
+      );
+    }
+
+    final url = imageUrl!;
+    final isSvg = url.toLowerCase().endsWith('.svg');
+    final isRemote = url.startsWith('http://') || url.startsWith('https://');
+    final isLocalFilePath = url.startsWith('/') || url.startsWith('file://');
+
+    if (isRemote) {
+      if (isSvg) {
+        return SvgPicture.network(
+          url,
+          fit: BoxFit.cover,
+          placeholderBuilder: (_) => const ColoredBox(
+            color: Colors.black12,
+            child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          ),
+        );
+      }
+      return Image.network(
+        url,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => const ColoredBox(
+          color: Colors.black12,
+          child: Center(child: Icon(Icons.image_not_supported, size: 16)),
+        ),
+      );
+    }
+
+    if (isLocalFilePath && !isSvg) {
+      final filePath = url.startsWith('file://')
+          ? Uri.parse(url).toFilePath()
+          : url;
+      return Image.file(
+        File(filePath),
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => const ColoredBox(
+          color: Colors.black12,
+          child: Center(child: Icon(Icons.image_not_supported, size: 16)),
+        ),
+      );
+    }
+
+    if (isSvg) {
+      return SvgPicture.asset(
+        url,
+        fit: BoxFit.cover,
+        placeholderBuilder: (_) => const ColoredBox(
+          color: Colors.black12,
+          child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+        ),
+      );
+    }
+
+    return Image.asset(
+      url,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => const ColoredBox(
+        color: Colors.black12,
+        child: Center(child: Icon(Icons.image_not_supported, size: 16)),
+      ),
+    );
+  }
+}
+
+class _MetricTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _MetricTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: context.surfaceVariantColor,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 16, color: context.textSecondary),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: context.textSecondary,
+                    ),
+                  ),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
                       color: context.textPrimary,
                     ),
                   ),
-                ],
-              ),
-            ),
-
-            // Tab Bar
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: AppColors.softShadow,
-              ),
-              child: TabBar(
-                controller: _tabController,
-                indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  gradient: AppColors.primaryGradient,
-                ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                labelColor: Colors.white,
-                unselectedLabelColor: AppColors.textSecondary,
-                labelStyle: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-                tabs: [
-                  Tab(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.search_off_rounded, size: 18),
-                        const SizedBox(width: 8),
-                        Text('My Lost'),
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withAlpha(51),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            '${_myLostItems.length}',
-                            style: TextStyle(fontSize: 12),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Tab(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.check_circle_rounded, size: 18),
-                        const SizedBox(width: 8),
-                        Text('My Found'),
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withAlpha(51),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            '${_myFoundItems.length}',
-                            style: TextStyle(fontSize: 12),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Tab Views
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  // My Lost Items
-                  _buildItemsList(_myLostItems, true),
-                  // My Found Items
-                  _buildItemsList(_myFoundItems, false),
                 ],
               ),
             ),
@@ -223,93 +635,38 @@ class _MyItemsPageState extends State<MyItemsPage>
       ),
     );
   }
+}
 
-  Widget _buildItemsList(List<Map<String, dynamic>> items, bool isLost) {
-    if (items.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isLost ? Icons.search_off_rounded : Icons.check_circle_rounded,
-              size: 64,
-              color: AppColors.textTertiary.withAlpha(128),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              isLost ? 'No lost items reported' : 'No found items reported',
-              style: TextStyle(
-                fontSize: 16,
-                color: context.textSecondary,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+class _InfoChip extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final Color color;
 
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: _MyItemCard(
-            title: item['title'],
-            location: item['location'],
-            time: item['time'],
-            category: item['category'],
-            status: item['status'],
-            isLost: isLost,
-            onTap: () {
-              // Navigate to item detail
-            },
-            onEdit: () {
-              // Edit item
-            },
-            onDelete: () {
-              // Delete item
-              _showDeleteDialog(context, item['title']);
-            },
-          ),
-        );
-      },
-    );
-  }
+  const _InfoChip({
+    required this.icon,
+    required this.text,
+    required this.color,
+  });
 
-  void _showDeleteDialog(BuildContext context, String itemTitle) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: Text(
-          'Delete Item',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Text('Are you sure you want to delete "$itemTitle"?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: context.textSecondary),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // TODO: Delete item
-            },
-            child: Text(
-              'Delete',
-              style: TextStyle(
-                color: AppColors.error,
-                fontWeight: FontWeight.bold,
-              ),
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withAlpha(26),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
             ),
           ),
         ],
@@ -318,270 +675,51 @@ class _MyItemsPageState extends State<MyItemsPage>
   }
 }
 
-class _MyItemCard extends StatelessWidget {
+class _StatusPane extends StatelessWidget {
+  final IconData icon;
   final String title;
-  final String location;
-  final String time;
-  final String category;
-  final String status;
-  final bool isLost;
-  final VoidCallback? onTap;
-  final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
+  final String subtitle;
+  final String? actionLabel;
+  final VoidCallback? onAction;
 
-  const _MyItemCard({
+  const _StatusPane({
+    required this.icon,
     required this.title,
-    required this.location,
-    required this.time,
-    required this.category,
-    required this.status,
-    required this.isLost,
-    this.onTap,
-    this.onEdit,
-    this.onDelete,
+    required this.subtitle,
+    this.actionLabel,
+    this.onAction,
   });
-
-  IconData _getCategoryIcon(String category) {
-    switch (category) {
-      case 'Electronics':
-        return Icons.devices_rounded;
-      case 'Personal':
-        return Icons.person_rounded;
-      case 'Accessories':
-        return Icons.watch_rounded;
-      case 'Documents':
-        return Icons.description_rounded;
-      case 'Keys':
-        return Icons.key_rounded;
-      case 'Bags':
-        return Icons.backpack_rounded;
-      default:
-        return Icons.inventory_2_rounded;
-    }
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'active':
-        return isLost ? AppColors.lostColor : AppColors.foundColor;
-      case 'claimed':
-        return AppColors.warning;
-      case 'resolved':
-        return AppColors.claimedColor;
-      default:
-        return AppColors.textSecondary;
-    }
-  }
-
-  String _getStatusText(String status) {
-    switch (status) {
-      case 'active':
-        return 'Active';
-      case 'claimed':
-        return 'Claimed';
-      case 'resolved':
-        return 'Resolved';
-      default:
-        return status;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    final isResolved = status == 'resolved';
-
-    return Opacity(
-      opacity: isResolved ? 0.6 : 1.0,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: AppColors.softShadow,
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(20),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      // Item Icon
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          gradient: isResolved
-                              ? null
-                              : (isLost
-                                  ? AppColors.lostGradient
-                                  : AppColors.foundGradient),
-                          color: isResolved ? AppColors.claimedColor : null,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Icon(
-                          _getCategoryIcon(category),
-                          color: Colors.white,
-                          size: 26,
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    title,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: context.textPrimary,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: _getStatusColor(status).withAlpha(26),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    _getStatusText(status),
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: _getStatusColor(status),
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.location_on_rounded,
-                                  size: 14,
-                                  color: context.textSecondary,
-                                ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    location,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: context.textSecondary,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Icon(
-                                  Icons.access_time_rounded,
-                                  size: 14,
-                                  color: AppColors.textTertiary,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  time,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.textTertiary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (!isResolved) ...[
-                    const SizedBox(height: 12),
-                    const Divider(color: AppColors.divider),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: onEdit,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary.withAlpha(26),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.edit_rounded,
-                                    size: 16,
-                                    color: AppColors.primary,
-                                  ),
-                                  SizedBox(width: 6),
-                                  Text(
-                                    'Edit',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.primary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: onDelete,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                color: AppColors.error.withAlpha(26),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.delete_rounded,
-                                    size: 16,
-                                    color: AppColors.error,
-                                  ),
-                                  SizedBox(width: 6),
-                                  Text(
-                                    'Delete',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.error,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ],
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 54, color: context.textTertiary),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: context.textPrimary,
               ),
+              textAlign: TextAlign.center,
             ),
-          ),
+            const SizedBox(height: 8),
+            Text(
+              subtitle,
+              style: TextStyle(fontSize: 14, color: context.textSecondary),
+              textAlign: TextAlign.center,
+            ),
+            if (actionLabel != null && onAction != null) ...[
+              const SizedBox(height: 16),
+              FilledButton(onPressed: onAction, child: Text(actionLabel!)),
+            ],
+          ],
         ),
       ),
     );

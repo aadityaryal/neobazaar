@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../app/theme/app_colors.dart';
-import '../../../../app/theme/theme_extensions.dart';
-import '../../../../core/utils/snackbar_utils.dart';
+import 'package:neobazaar/app/theme/app_colors.dart';
+import 'package:neobazaar/app/theme/theme_extensions.dart';
+import 'package:neobazaar/core/utils/snackbar_utils.dart';
 
 class ItemDetailPage extends StatelessWidget {
   final String title;
@@ -110,7 +110,9 @@ class ItemDetailPage extends StatelessWidget {
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: BoxDecoration(
-                  gradient: isLost ? AppColors.lostGradient : AppColors.foundGradient,
+                  gradient: isLost
+                      ? AppColors.lostGradient
+                      : AppColors.foundGradient,
                 ),
                 child: SafeArea(
                   child: Column(
@@ -144,14 +146,16 @@ class ItemDetailPage extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              isLost ? Icons.search_off_rounded : Icons.check_circle_rounded,
+                              isLost
+                                  ? Icons.search_off_rounded
+                                  : Icons.check_circle_rounded,
                               size: 18,
                               color: Colors.white,
                             ),
                             const SizedBox(width: 6),
                             Text(
                               isLost ? 'Lost Item' : 'Found Item',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
@@ -170,7 +174,7 @@ class ItemDetailPage extends StatelessWidget {
           // Content
           SliverToBoxAdapter(
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.background,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
               ),
@@ -215,7 +219,7 @@ class ItemDetailPage extends StatelessWidget {
                                   ),
                                   child: Text(
                                     category,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                       color: AppColors.primary,
@@ -257,12 +261,12 @@ class ItemDetailPage extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.description_rounded,
                                   size: 20,
                                   color: AppColors.primary,
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Text(
                                   'Description',
                                   style: TextStyle(
@@ -305,7 +309,7 @@ class ItemDetailPage extends StatelessWidget {
                                 gradient: AppColors.primaryGradient,
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.person_rounded,
                                 color: Colors.white,
                                 size: 28,
@@ -342,7 +346,7 @@ class ItemDetailPage extends StatelessWidget {
                                 color: AppColors.primary.withAlpha(26),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.chat_rounded,
                                 color: AppColors.primary,
                                 size: 22,
@@ -384,7 +388,7 @@ class ItemDetailPage extends StatelessWidget {
                   color: AppColors.primary.withAlpha(26),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.chat_bubble_rounded,
                   color: AppColors.primary,
                 ),
@@ -400,7 +404,9 @@ class ItemDetailPage extends StatelessWidget {
                   child: Container(
                     height: 56,
                     decoration: BoxDecoration(
-                      gradient: isLost ? AppColors.foundGradient : AppColors.primaryGradient,
+                      gradient: isLost
+                          ? AppColors.foundGradient
+                          : AppColors.primaryGradient,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: AppColors.buttonShadow,
                     ),
@@ -408,13 +414,15 @@ class ItemDetailPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          isLost ? Icons.check_circle_rounded : Icons.pan_tool_rounded,
+                          isLost
+                              ? Icons.check_circle_rounded
+                              : Icons.pan_tool_rounded,
                           color: Colors.white,
                         ),
                         const SizedBox(width: 10),
                         Text(
                           isLost ? 'I Found This Item' : 'Claim This Item',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -436,16 +444,16 @@ class ItemDetailPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
             Container(
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                gradient: isLost ? AppColors.foundGradient : AppColors.primaryGradient,
+                gradient: isLost
+                    ? AppColors.foundGradient
+                    : AppColors.primaryGradient,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -457,7 +465,7 @@ class ItemDetailPage extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               isLost ? 'Found This Item?' : 'Claim Item',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -500,28 +508,18 @@ class _InfoChip extends StatelessWidget {
   final IconData icon;
   final String text;
 
-  const _InfoChip({
-    required this.icon,
-    required this.text,
-  });
+  const _InfoChip({required this.icon, required this.text});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: context.textSecondary,
-        ),
+        Icon(icon, size: 16, color: context.textSecondary),
         const SizedBox(width: 6),
         Text(
           text,
-          style: TextStyle(
-            fontSize: 13,
-            color: context.textSecondary,
-          ),
+          style: TextStyle(fontSize: 13, color: context.textSecondary),
         ),
       ],
     );

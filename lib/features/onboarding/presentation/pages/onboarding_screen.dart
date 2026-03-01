@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:neobazaar/core/widgets/gradient_button.dart';
 import 'package:neobazaar/app/theme/app_colors.dart';
+import 'package:neobazaar/core/widgets/gradient_button.dart';
 import 'package:neobazaar/features/auth/presentation/pages/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -104,8 +104,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         opacity: _textAnimationController,
                         child: Text(
                           pages[index]["title"]!,
-                          style: const TextStyle(
-                            color: Color(0xFF6B46C1),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
                           ),
@@ -129,8 +129,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         opacity: _textAnimationController,
                         child: Text(
                           pages[index]["desc"]!,
-                          style: const TextStyle(
-                            color: Colors.black,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 18,
                           ),
                           textAlign: TextAlign.center,
@@ -158,7 +158,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   height: 8,
                   decoration: BoxDecoration(
                     color: _currentPage == index
-                        ? const Color(0xFF6B46C1)
+                        ? Theme.of(context).colorScheme.primary
                         : Colors.grey,
                     borderRadius: BorderRadius.circular(4),
                   ),

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/onboarding_item.dart';
-import '../../../../app/theme/app_colors.dart';
+import 'package:neobazaar/app/theme/app_colors.dart';
+import 'package:neobazaar/features/onboarding/domain/entities/onboarding_item.dart';
 
 class OnboardingContent extends StatelessWidget {
   final OnboardingItem item;
 
-  const OnboardingContent({
-    super.key,
-    required this.item,
-  });
+  const OnboardingContent({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -66,11 +63,7 @@ class OnboardingContent extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Icon(
-                    item.icon,
-                    size: 90,
-                    color: Colors.white,
-                  ),
+                  child: Icon(item.icon, size: 90, color: Colors.white),
                 ),
               ],
             ),
@@ -81,7 +74,7 @@ class OnboardingContent extends StatelessWidget {
           Text(
             item.title,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
@@ -95,7 +88,7 @@ class OnboardingContent extends StatelessWidget {
           Text(
             item.description,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 17,
               height: 1.6,
               color: AppColors.textSecondary,

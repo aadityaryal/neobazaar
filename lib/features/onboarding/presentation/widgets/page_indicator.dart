@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../app/theme/app_colors.dart';
+import 'package:neobazaar/app/theme/app_colors.dart';
 
 class PageIndicator extends StatelessWidget {
   final int itemCount;
@@ -30,18 +30,20 @@ class PageIndicator extends StatelessWidget {
                 ? LinearGradient(
                     colors: [
                       activeColor ?? AppColors.primary,
-                      (activeColor ?? AppColors.primary).withAlpha(179), // 70% opacity
+                      (activeColor ?? AppColors.primary).withAlpha(
+                        179,
+                      ), // 70% opacity
                     ],
                   )
                 : null,
-            color: currentPage != index
-                ? AppColors.border
-                : null,
+            color: currentPage != index ? AppColors.border : null,
             borderRadius: BorderRadius.circular(5),
             boxShadow: currentPage == index
                 ? [
                     BoxShadow(
-                      color: (activeColor ?? AppColors.primary).withAlpha(102), // 40% opacity
+                      color: (activeColor ?? AppColors.primary).withAlpha(
+                        102,
+                      ), // 40% opacity
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),

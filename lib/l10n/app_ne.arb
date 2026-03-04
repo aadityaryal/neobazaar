@@ -1,0 +1,13 @@
+{
+  "@@locale": "ne",
+  "appTitle": "नियोबजार",
+  "login": "लगइन",
+  "logout": "लगआउट",
+  "retry": "फेरि प्रयास गर्नुहोस्",
+  "cancel": "रद्द गर्नुहोस्",
+  "submit": "सबमिट",
+  "walletTopup": "वालेट टप-अप",
+  "quests": "क्वेस्टहरू",
+  "leaderboard": "लिडरबोर्ड",
+  "notifications": "सूचनाहरू"
+}

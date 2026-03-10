@@ -1,4 +1,4 @@
-package com.aaditya.neobazaar.neobazaar
+package com.aaditya.neobazaar.neobazaarr
 
 import io.flutter.embedding.android.FlutterActivity
 

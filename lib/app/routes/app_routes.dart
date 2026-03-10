@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:neobazaar/core/providers/capability_cache_provider.dart';
 
 /// Simple navigation utility class
 class AppRoutes {
@@ -31,5 +33,27 @@ class AppRoutes {
   /// Pop to first route (root)
   static void popToFirst(BuildContext context) {
     Navigator.popUntil(context, (route) => route.isFirst);
+  }
+
+  /// Enforces admin capability checks before navigating to admin pages.
+  /// Returns true when user has required capability and false otherwise.
+  static bool requireAdmin(
+    BuildContext context,
+    WidgetRef ref, {
+    Set<String> requiredCapabilities = const <String>{
+      'admin:all',
+      'admin:view',
+    },
+    String deniedMessage = 'You do not have access to this admin feature.',
+  }) {
+    final capabilities = ref.read(capabilityCacheProvider);
+    if (capabilities.hasAny(requiredCapabilities)) {
+      return true;
+    }
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(deniedMessage)));
+    return false;
   }
 }

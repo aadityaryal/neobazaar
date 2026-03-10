@@ -1,0 +1,13 @@
+{
+  "@@locale": "en",
+  "appTitle": "NeoBazaar",
+  "login": "Login",
+  "logout": "Logout",
+  "retry": "Retry",
+  "cancel": "Cancel",
+  "submit": "Submit",
+  "walletTopup": "Wallet Top-up",
+  "quests": "Quests",
+  "leaderboard": "Leaderboard",
+  "notifications": "Notifications"
+}
